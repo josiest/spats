@@ -1,3 +1,5 @@
+# --- C++ ---
+
 # Prerequisites
 *.d
 
@@ -30,6 +32,8 @@
 *.exe
 *.out
 *.app
+
+# --- cmake ---
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
@@ -41,6 +45,9 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+# --- vim ---
+
 # Swap
 [._]*.s[a-v][a-z]
 !*.svg  # comment out if you don't need vector files
@@ -60,3 +67,6 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+
+# --- Project ---
+build/
