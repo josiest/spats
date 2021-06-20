@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdexcept>
 
-TEST_CASE("invalid inputs", "[kdtree][vector][invalid_argument]")
+TEST_CASE("invalid inputs on constructor", "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<int>;
     using kdtree = spats::kdtree<point, int>;

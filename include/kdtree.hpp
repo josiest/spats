@@ -2,6 +2,9 @@
 #define KDTREE_HPP
 
 #include <vector>
+#include <memory>
+#include <algorithm>
+#include <string>
 
 namespace spats {
 
@@ -45,6 +48,51 @@ num_t L2sq(point const & a, point const & b)
  */
 template<class point, typename num_t = double>
 class kdtree {
+private:
+    struct node {
+        std::unique_ptr<point> value;
+        std::unique_ptr<node> left;
+        std::unique_ptr<node> right;
+
+        node(std::vector<point> points, int depth)
+        {
+            // base case no points - leave everything as null
+            if (points.size() == 0) {
+                return;
+            }
+            auto const median = points.size()/2;
+            value = std::make_unique<point>(points[median]);
+
+            // base case one point - left and right left as null
+            if (points.size() == 1) {
+                return;
+            }
+            // base case two points - right left as null
+            if (points.size() == 2) {
+                left = std::make_unique<node>(
+                    std::vector<point>{points[0]}, depth+1
+                );
+            }
+
+            // sort points by axis
+            int const axis = depth % std::size(points.back());
+            std::sort(points.begin(), points.end(),
+                      [&axis](point const & a, point const & b) {
+                return a[axis] < b[axis];
+            });
+
+            // split points by the median and set the left and right nodes
+            std::vector<point> left_points(points.begin(),
+                                           points.begin() + median);
+            left = std::make_unique<node>(left_points, depth + 1);
+
+            std::vector<point> right_points(points.begin() + median + 1,
+                                            points.end());
+            right = std::make_unique<node>(right_points, depth + 1);
+        }
+    };
+    node root;
+    distance_fn<point, num_t> distance;
 public:
     /**
      * Create a kdtree from an iterator of points.
@@ -58,7 +106,21 @@ public:
     template<class InputIt>
     kdtree(InputIt begin, InputIt end,
            distance_fn<point, num_t> distance)
+        : root(std::vector<point>(begin, end), 0), distance{distance}
     {
+        // no points, no need to check they have same size
+        if (begin == end) {
+            return;
+        }
+        // ensure that all points have the same size
+        point const & p = *begin;
+        for (auto it = begin+1; it != end; it++) {
+            point const & q = *it;
+            if (std::size(p) != std::size(q)) {
+                std::string message{"all points must have teh same size!"};
+                throw std::invalid_argument{message};
+            }
+        }
     }
 
     /**
