@@ -9,7 +9,7 @@ private:
     int x, y;
 public:
     Point2D(int x, int y) : x{x}, y{y} {}
-    int operator[](size_t i)
+    int operator[](size_t i) const
     {
         if (i == 0) {
             return x;
@@ -17,11 +17,12 @@ public:
         else if (i == 1) {
             return y;
         }
+        else {
+            throw std::out_of_range{""};
+        }
     }
+    constexpr size_t size() const noexcept { return 2; }
 };
-namespace std {
-size_t size(Point2D const & p) { return 2; }
-}
 
 TEST_CASE("distance bewteen integer vector origins", "[L2sq][vector]")
 {

@@ -24,8 +24,8 @@ public:
             throw std::out_of_range{""};
         }
     }
+    constexpr size_t size() const noexcept { return 3; }
 };
-namespace std { size_t size(Point3D_2 const & p) { return 3; } }
 
 TEST_CASE("empty tree with k = 0", "[kdtree][vector]")
 {
