@@ -24,9 +24,11 @@ using distance_fn = num_t(*)(point const &, point const &);
 template<class point, typename num_t>
 num_t L2sq(point const & a, point const & b)
 {
+    // can't compute the distance between points in different dimensions
     if (std::size(a) != std::size(b)) {
         throw std::invalid_argument{"points must be the same dimension!"};
     }
+    // compute the sum of the squares of the difference
     num_t dist = 0;
     for (int i = 0; i < std::size(a); i++) {
         num_t const e = a[i]-b[i];
