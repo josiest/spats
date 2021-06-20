@@ -2,6 +2,30 @@
 #include "kdtree.hpp"
 #include <vector>
 #include <cstdlib>
+#include <stdexcept>
+
+class Point3D {
+private:
+    double x, y, z;
+public:
+    Point3D(double x, double y, double z) : x{x}, y{y}, z{z} {}
+    double operator[](size_t i) const
+    {
+        if (i == 0) {
+            return x;
+        }
+        else if (i == 1) {
+            return y;
+        }
+        else if (i == 2) {
+            return z;
+        }
+        else {
+            throw std::out_of_range{""};
+        }
+    }
+};
+namespace std { size_t size(Point3D const & p) { return 3; } }
 
 TEST_CASE("empty tree", "[kdtree][vector]")
 {
@@ -98,30 +122,32 @@ TEST_CASE(
 }
 
 TEST_CASE(
-    "random integer point tree with less points in tree than k and negative values"
-    "[kdtree][vector][abs]")
+    "random real point tree with less points in tree than k and negative values"
+    "[kdtree][Point3D][abs]")
 {
-    using point = std::vector<int>;
-    using kdtree = spats::kdtree<point, int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    using point = Point3D;
+    using kdtree = spats::kdtree<point, double>;
+    constexpr auto dist = spats::L2sq<point, double>;
 
     std::vector<point> points;
-    points.push_back(point{0, 4});
-    points.push_back(point{10, -2});
+    points.emplace_back(75.892, -0.514, 53.958);
+    points.emplace_back(7.810, -16.497, 70.660);
     kdtree index(points.begin(), points.end(), dist);
 
-    point const p{0, 5};
+    point const p{58.711, -88.995, 20.744};
     int const k = 3;
-    auto found = index.nearest_within(p, k, 100);
+    auto found = index.nearest_within(p, k, 150.0*150.0);
     REQUIRE(found.size() == k);
 
     point const & q1 = found[0];
-    REQUIRE(q1[0] == 0);
-    REQUIRE(q1[1] == 4);
+    REQUIRE(std::abs(q1[0]-(75.892)) < 0.001);
+    REQUIRE(std::abs(q1[1]-(-0.514)) < 0.001);
+    REQUIRE(std::abs(q1[2]-(53.958)) < 0.001);
 
     point const & q2 = found[0];
-    REQUIRE(q2[0] == 10);
-    REQUIRE(q2[2] == -2);
+    REQUIRE(std::abs(q2[0]-(7.810)) < 0.001);
+    REQUIRE(std::abs(q2[1]-(-16.497)) < 0.001);
+    REQUIRE(std::abs(q2[2]-(70.660)) < 0.001);
 }
 
 TEST_CASE("empty tree with negative k", "[kdtree][vector][invalid_argument]")
