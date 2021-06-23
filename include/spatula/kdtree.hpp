@@ -20,7 +20,7 @@
 #include "util.hpp"
 #endif
 
-namespace spats {
+namespace spatula {
 
 /**
  * A function pointer type for distance functions.
@@ -79,11 +79,12 @@ private:
 #endif
             // sort points by current axis
             size_t const axis = depth % std::size(points.back());
-            std::sort(points.begin(), points.end(),
-                      [&axis](point const & a, point const & b) {
+            auto by_axis = [&axis](point const & a, point const & b) {
                 return a[axis] < b[axis];
-            });
+            };
+            std::sort(points.begin(), points.end(), by_axis);
 
+            // the current node is the middle of the sorted points
             size_t const median = points.size()/2;
             data = points[median];
 
@@ -141,6 +142,71 @@ private:
      *   to a plane that bisects the bounding box of all the node's children
      */
 
+    void check_rep() const
+    {
+#ifdef DEBUG
+        if (!root) {
+            return;
+        }
+        std::vector<point> seen;
+        check_rep(root.get(), seen, 0);
+        // all points have the same size
+        for (auto it = seen.begin(); it != seen.end(); it++) {
+            if (std::size(*it) != std::size(seen.front())) {
+                UNSCOPED_INFO("point " << *it << " has inconsistent dimension");
+            }
+        }
+#endif
+    }
+
+    void check_rep(node * p, std::vector<point> & seen, size_t depth) const
+    {
+#ifdef DEBUG
+        // check if std::size(p) gives correct dimension
+        // and that p[i] gives i^th element of p
+        try {
+            for (size_t i = 0; i < std::size(p->data); i++) {
+                // may cause segfault or throw exception if i doesn't get i^th
+                // element or if std::size gives larger dimension than point
+                p->data[i];
+            }
+        }
+        catch (std::exception const & e) {
+            UNSCOPED_INFO("Acessing data caused exception: " << e.what());
+        }
+
+        // no duplicate nodes
+        if (std::find(seen.begin(), seen.end(), p->data) != seen.end()) {
+            UNSCOPED_INFO("Duplicate point found: " << p->data);
+        }
+        seen.push_back(p->data);
+
+        size_t const axis = depth % std::size(p->data);
+        if (p->left) {
+            // q[d] <= p[d] only if q is a left child of p
+            if (p->left->data[axis] > p->data[axis]) {
+                UNSCOPED_INFO("Nodes are not sorted correctly");
+                UNSCOPED_INFO("  "
+                        << p->left->data << " appears before " << p->data
+                        << " but " << p->left->data[axis]
+                        << " > " << p->data[axis]);
+            }
+            check_rep(p->left.get(), seen, depth+1);
+        }
+        if (p->right) {
+            // q[d] > p[d] only if q is a right child of p
+            if (p->right->data[axis] <= p->data[axis]) {
+                UNSCOPED_INFO("Nodes are not sorted correctly");
+                UNSCOPED_INFO("  "
+                        << p->right->data << " appears after " << p->data
+                        << " but " << p->right->data[axis]
+                        << " <= " << p->data[axis]);
+            }
+            check_rep(p->right.get(), seen, depth+1);
+        }
+#endif
+    }
+
     // find the nearest k points to p
     //  assumes q is not null, k is positive, r is either null or positive
     std::vector<std::pair<point, num_t>>
@@ -159,8 +225,16 @@ private:
             UNSCOPED_INFO("r is not positive");
         }
 #endif
-        // compute the current distance
+        // define the match type and how to compare/reduce them
         using match_t = std::pair<point, num_t>;
+        auto cmp_by_distance = [](match_t const & a, match_t const & b) {
+            return a.second < b.second;
+        };
+        auto reduce_by_distance = [](match_t const & p, num_t dist) {
+            return p.second < dist;
+        };
+
+        // compute the current distance
         match_t current{q->data, distance(p, q->data)};
 
         // base case: no children
@@ -219,25 +293,17 @@ private:
             nearest.insert(nearest.end(),
                            other_nearest.begin(), other_nearest.end());
 
-            // sort by distance
-            std::sort(nearest.begin(), nearest.end(),
-                      [](match_t const & a, match_t const & b) {
-                return a.second < b.second;
-            });
-
-            // remove any excess points
+            // sort by distance 
+            std::sort(nearest.begin(), nearest.end(), cmp_by_distance);
             if (nearest.size() > k) {
                 nearest.erase(nearest.begin() + k, nearest.end());
             }
         }
 
         // find appropriate place to insert
-        auto it = std::lower_bound(
-                nearest.begin(), nearest.end(), current.second,
-                [](match_t const & match, num_t distance) {
+        auto it = std::lower_bound(nearest.begin(), nearest.end(),
+                                   current.second, reduce_by_distance);
 
-            return match.second < distance;
-        });
         // if current best is not good enough but there aren't enough nearest
         // values yet, just add current and return
         if (it == nearest.end() && nearest.size() < k) {
@@ -254,71 +320,6 @@ private:
             nearest.erase(nearest.begin() + k, nearest.end());
         }
         return nearest;
-    }
-
-    void check_rep(node * p, std::vector<point> & seen, size_t depth) const
-    {
-#ifdef DEBUG
-        // check if std::size(p) gives correct dimension
-        // and that p[i] gives i^th element of p
-        try {
-            for (size_t i = 0; i < std::size(p->data); i++) {
-                // may cause segfault or throw exception if i doesn't get i^th
-                // element or if std::size gives larger dimension than point
-                p->data[i];
-            }
-        }
-        catch (std::exception const & e) {
-            UNSCOPED_INFO("Acessing data caused exception: " << e.what());
-        }
-
-        // no duplicate nodes
-        if (std::find(seen.begin(), seen.end(), p->data) != seen.end()) {
-            UNSCOPED_INFO("Duplicate point found: " << p->data);
-        }
-        seen.push_back(p->data);
-
-        size_t const axis = depth % std::size(p->data);
-        if (p->left) {
-            // q[d] <= p[d] only if q is a left child of p
-            if (p->left->data[axis] > p->data[axis]) {
-                UNSCOPED_INFO("Nodes are not sorted correctly");
-                UNSCOPED_INFO("  "
-                        << p->left->data << " appears before " << p->data
-                        << " but " << p->left->data[axis]
-                        << " > " << p->data[axis]);
-            }
-            check_rep(p->left.get(), seen, depth+1);
-        }
-        if (p->right) {
-            // q[d] > p[d] only if q is a right child of p
-            if (p->right->data[axis] <= p->data[axis]) {
-                UNSCOPED_INFO("Nodes are not sorted correctly");
-                UNSCOPED_INFO("  "
-                        << p->right->data << " appears after " << p->data
-                        << " but " << p->right->data[axis]
-                        << " <= " << p->data[axis]);
-            }
-            check_rep(p->right.get(), seen, depth+1);
-        }
-#endif
-    }
-
-    void check_rep() const
-    {
-#ifdef DEBUG
-        if (!root) {
-            return;
-        }
-        std::vector<point> seen;
-        check_rep(root.get(), seen, 0);
-        // all points have the same size
-        for (auto it = seen.begin(); it != seen.end(); it++) {
-            if (std::size(*it) != std::size(seen.front())) {
-                UNSCOPED_INFO("point " << *it << " has inconsistent dimension");
-            }
-        }
-#endif
     }
 public:
     /**

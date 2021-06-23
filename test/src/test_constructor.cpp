@@ -6,8 +6,8 @@
 TEST_CASE("invalid inputs on constructor", "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<int>;
-    using kdtree = spats::kdtree<point, int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    using kdtree = spatula::kdtree<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
 
     std::vector<point> points;
     points.push_back(point{0, 2});

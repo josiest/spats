@@ -10,10 +10,10 @@
 TEST_CASE("empty tree", "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
 
     std::vector<point> points;
-    spats::kdtree<point, int> index(points.begin(), points.end(), dist);
+    spatula::kdtree<point, int> index(points.begin(), points.end(), dist);
 
     point const p{0, 0};
     auto found = index.nearest_within(p, 1, 1);
@@ -23,11 +23,11 @@ TEST_CASE("empty tree", "[kdtree][vector]")
 TEST_CASE("singleton integer point tree with k = 0", "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
 
     std::vector<point> points;
     points.push_back(point{0, 0});
-    spats::kdtree<point, int> index(points.begin(), points.end(), dist);
+    spatula::kdtree<point, int> index(points.begin(), points.end(), dist);
 
     point const p{0, 0};
     auto found = index.nearest_within(p, 1, 0);
@@ -38,11 +38,11 @@ TEST_CASE("singleton real point tree with points within radius",
           "[kdtree][vector][abs]")
 {
     using point = std::vector<double>;
-    constexpr auto dist = spats::L2sq<point, double>;
+    constexpr auto dist = spatula::L2sq<point, double>;
 
     std::vector<point> points;
     points.push_back(point{3.909, 6.154});
-    spats::kdtree<point, double> index(points.begin(), points.end(), dist);
+    spatula::kdtree<point, double> index(points.begin(), points.end(), dist);
 
     point const p{8.514, 6.342};
     auto found = index.nearest_within(p, 5.0, 3);
@@ -58,8 +58,8 @@ TEST_CASE("random integer point tree with no points within radius",
           "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    using kdtree = spats::kdtree<point, int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    using kdtree = spatula::kdtree<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
 
     std::vector<point> points;
     points.push_back(point{65, 64});
@@ -77,8 +77,8 @@ TEST_CASE(
     "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    using kdtree = spats::kdtree<point, int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    using kdtree = spatula::kdtree<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
 
     std::vector<point> points;
     points.push_back(point{4, -1});
@@ -107,8 +107,8 @@ TEST_CASE(
     "[kdtree][Vector3d][abs]")
 {
     using point = Vector3d;
-    using kdtree = spats::kdtree<point, double>;
-    constexpr auto dist = spats::L2sq<point, double>;
+    using kdtree = spatula::kdtree<point, double>;
+    constexpr auto dist = spatula::L2sq<point, double>;
 
     std::vector<point> points;
     points.push_back(point{75.892, -0.514, 53.958});
@@ -117,9 +117,7 @@ TEST_CASE(
 
     point const p{58.711, -88.995, 20.744};
     size_t const k = 3;
-    UNSCOPED_INFO("about to search");
     auto found = index.nearest_within(p, 150.0, k);
-    UNSCOPED_INFO("finished searcing");
     REQUIRE(found.size() == k);
 
     point const & q1 = found[0];
@@ -137,8 +135,8 @@ TEST_CASE("random tree with r = 0",
           "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<double>;
-    using kdtree = spats::kdtree<point, double>;
-    constexpr auto dist = spats::L2sq<point, double>;
+    using kdtree = spatula::kdtree<point, double>;
+    constexpr auto dist = spatula::L2sq<point, double>;
 
     std::vector<point> points;
     points.push_back(point{13.29, -20.3});
@@ -153,8 +151,8 @@ TEST_CASE("random tree with negative r",
           "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<double>;
-    using kdtree = spats::kdtree<point, double>;
-    constexpr auto dist = spats::L2sq<point, double>;
+    using kdtree = spatula::kdtree<point, double>;
+    constexpr auto dist = spatula::L2sq<point, double>;
 
     std::vector<point> points;
     points.push_back(point{-30, 20});
@@ -168,8 +166,8 @@ TEST_CASE("random tree with negative r",
 TEST_CASE("incompatible input point", "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<int>;
-    using kdtree = spats::kdtree<point, int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    using kdtree = spatula::kdtree<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
 
     std::vector<point> points;
     points.push_back(point{2, 3});

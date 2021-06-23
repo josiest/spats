@@ -10,7 +10,7 @@
 TEST_CASE("distance bewteen integer vector origins", "[L2sq][vector]")
 {
     using point = std::vector<int>;
-    constexpr auto dist = spats::L2sq<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
 
     point const a{0, 0};
     point const b{0, 0};
@@ -20,7 +20,7 @@ TEST_CASE("distance bewteen integer vector origins", "[L2sq][vector]")
 TEST_CASE("distance between custom integer points origins", "[L2sq][Vector2i]")
 {
     using point = Vector2i;
-    constexpr auto dist = spats::L2sq<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
     point const a{0, 0};
     point const b{0, 0};
     REQUIRE(dist(a, b) == 0);
@@ -29,7 +29,7 @@ TEST_CASE("distance between custom integer points origins", "[L2sq][Vector2i]")
 TEST_CASE("distance between random integer point and origin", "[L2sq][Vector2i]")
 {
     using point = Vector2i;
-    constexpr auto dist = spats::L2sq<point, int>;
+    constexpr auto dist = spatula::L2sq<point, int>;
     point const a{0, 0};
     point const b{11, 5};
     REQUIRE(dist(a, b) == 146);
@@ -39,7 +39,7 @@ TEST_CASE("distance between random real point and origin",
           "[L2sq][vector][abs]")
 {
     using point = std::vector<double>;
-    constexpr auto dist = spats::L2sq<point, double>;
+    constexpr auto dist = spatula::L2sq<point, double>;
     point const a{78.7270, 16.1431, 16.9849};
     point const b{0, 0, 0};
     REQUIRE(std::abs(dist(a, b) - 6747.02) < 0.01);
@@ -48,7 +48,7 @@ TEST_CASE("distance between random real point and origin",
 TEST_CASE("distance between two random real points", "[L2sq][vector][abs]")
 {
     using point = std::vector<float>;
-    constexpr auto dist = spats::L2sq<point, float>;
+    constexpr auto dist = spatula::L2sq<point, float>;
     point const a{0.050760, 0.999944, 0.868459, 0.954534, 0.926416};
     point const b{0.184868, 0.553611, 0.972474, 0.364502, 0.552099};
     REQUIRE(std::abs(dist(a, b) - 0.7162) < 0.0001);
@@ -58,7 +58,7 @@ TEST_CASE("distance between incompatible points",
           "[L2sq][vector][invalid_argument]")
 {
     using point = std::vector<double>;
-    constexpr auto dist = spats::L2sq<point, double>;
+    constexpr auto dist = spatula::L2sq<point, double>;
     point const a{1, 2};
     point const b{3, 4, 5};
     REQUIRE_THROWS_AS(dist(a, b), std::invalid_argument);
