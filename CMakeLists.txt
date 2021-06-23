@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 project(spatula VERSION 0.0.0)
 
@@ -9,6 +9,7 @@ set(spatula_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 option(TESTING "Run tests" OFF)
 if(TESTING)
+    add_compile_definitions(DEBUG)
     add_subdirectory(test)
 endif()
 

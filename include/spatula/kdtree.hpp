@@ -4,7 +4,6 @@
 // resource handlers
 #include <vector>
 #include <memory>
-#include <optional>
 #include <string>
 
 // utilities
@@ -14,7 +13,6 @@
 // functional interface/algorithms
 #include <algorithm>
 
-#define DEBUG
 #ifdef DEBUG
 #include <catch2/catch.hpp>
 #include "util.hpp"
@@ -39,7 +37,7 @@ using distance_fn = num_t(*)(point const &, point const &);
  * :return: the L2 squared distance between a and b
  */
 template<class point, typename num_t>
-num_t L2sq(point const & a, point const & b)
+num_t L2(point const & a, point const & b)
 {
     // can't compute the distance between points in different dimensions
     if (std::size(a) != std::size(b)) {
@@ -210,8 +208,7 @@ private:
     // find the nearest k points to p
     //  assumes q is not null, k is positive, r is either null or positive
     std::vector<std::pair<point, num_t>>
-    nearest_to(point const & p, node * q, size_t depth,
-               std::optional<num_t> r, size_t k) const
+    nearest_to(point const & p, node * q, size_t depth, num_t r, size_t k) const
     {
         check_rep();
 #ifdef DEBUG
@@ -221,7 +218,7 @@ private:
         if (k <= 0) {
             UNSCOPED_INFO("k is not positive");
         }
-        if (r && *r <= 0) {
+        if (r <= 0) {
             UNSCOPED_INFO("r is not positive");
         }
 #endif
@@ -234,18 +231,21 @@ private:
             return p.second < dist;
         };
 
+        // define nearest to originally be empty
+        std::vector<match_t> nearest;
+
         // compute the current distance
         match_t current{q->data, distance(p, q->data)};
+        bool const within_radius = current.second < r * r;
 
-        // base case: no children
-        if (!q->left) {
-
-            // if radius specified and current is out of bounds return empty
-            if (r && current.second < (*r)*(*r)) {
-                return std::vector<match_t>();
-            }
-            return std::vector<match_t>{current};
+        // base case: no children - add current to nearest if within radius
+        if (!q->left && within_radius) {
+            nearest.push_back(current);
         }
+        if (!q->left) { // then return the current matches
+            return nearest;
+        }
+
         size_t const axis = depth % std::size(p);
         // go left if current axis in p is at most as in q
         node * preferred = q->left.get();
@@ -255,15 +255,12 @@ private:
             preferred = q->right.get();
             other = q->left.get();
         }
-
         // it may be the case that the preffered branch is null
         // if so just skip it and leave nearest as empty
-        std::vector<match_t> nearest;
-        num_t preferred_best = std::numeric_limits<num_t>::max();
-
         if (preferred) {
             nearest = nearest_to(p, preferred, depth+1, r, k);
         }
+        num_t preferred_best = std::numeric_limits<num_t>::max();
         if (!nearest.empty()) {
             preferred_best = nearest.back().second;
         }
@@ -370,7 +367,10 @@ public:
             return std::vector<point>();
         }
         // otherwise call recursive search
-        auto nearest_matches = nearest_to(p, root.get(), 0, std::nullopt, k);
+
+        // since radius isn't specified for nearest_to, defualt to max possible
+        auto const max_radius = std::numeric_limits<num_t>::max();
+        auto nearest_matches = nearest_to(p, root.get(), 0, max_radius, k);
 
         // convert match vector to point vector
         std::vector<point> nearest;
