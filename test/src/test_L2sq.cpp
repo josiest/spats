@@ -1,28 +1,11 @@
 #include <catch2/catch.hpp>
-#include "kdtree.hpp"
+#include "spatula/kdtree.hpp"
+
+#include "util.hpp"
 #include <vector>
+
 #include <cstdlib>
 #include <stdexcept>
-
-class Point2D {
-private:
-    int x, y;
-public:
-    Point2D(int x, int y) : x{x}, y{y} {}
-    int operator[](size_t i) const
-    {
-        if (i == 0) {
-            return x;
-        }
-        else if (i == 1) {
-            return y;
-        }
-        else {
-            throw std::out_of_range{""};
-        }
-    }
-    constexpr size_t size() const noexcept { return 2; }
-};
 
 TEST_CASE("distance bewteen integer vector origins", "[L2sq][vector]")
 {
@@ -34,18 +17,18 @@ TEST_CASE("distance bewteen integer vector origins", "[L2sq][vector]")
     REQUIRE(dist(a, b) == 0);
 }
 
-TEST_CASE("distance between custom integer points origins", "[L2sq][Point2D]")
+TEST_CASE("distance between custom integer points origins", "[L2sq][Vector2i]")
 {
-    using point = Point2D;
+    using point = Vector2i;
     constexpr auto dist = spats::L2sq<point, int>;
     point const a{0, 0};
     point const b{0, 0};
     REQUIRE(dist(a, b) == 0);
 }
 
-TEST_CASE("distance between random integer point and origin", "[L2sq][Point2D]")
+TEST_CASE("distance between random integer point and origin", "[L2sq][Vector2i]")
 {
-    using point = Point2D;
+    using point = Vector2i;
     constexpr auto dist = spats::L2sq<point, int>;
     point const a{0, 0};
     point const b{11, 5};

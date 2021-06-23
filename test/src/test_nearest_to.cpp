@@ -1,31 +1,14 @@
+// testing
 #include <catch2/catch.hpp>
-#include "kdtree.hpp"
+#include "spatula/kdtree.hpp"
+
+// data structures
+#include "util.hpp"
 #include <vector>
+
+// utility
 #include <cstdlib>
 #include <stdexcept>
-
-class Point3D_2 {
-private:
-    double x, y, z;
-public:
-    Point3D_2(double x, double y, double z) : x{x}, y{y}, z{z} {}
-    double operator[](size_t i) const
-    {
-        if (i == 0) {
-            return x;
-        }
-        else if (i == 1) {
-            return y;
-        }
-        else if (i == 2) {
-            return z;
-        }
-        else {
-            throw std::out_of_range{""};
-        }
-    }
-    constexpr size_t size() const noexcept { return 3; }
-};
 
 TEST_CASE("empty tree with k = 0", "[kdtree][vector]")
 {
@@ -98,7 +81,7 @@ TEST_CASE("singleton random tree with k = 1",
     REQUIRE(found.size() == 1);
     point const & q = found[0];
     REQUIRE(std::abs(q[0] - 3.837089043) < 0.000000001);
-    REQUIRE(std::abs(q[0] - 3.367744091) < 0.000000001);
+    REQUIRE(std::abs(q[1] - 3.367744091) < 0.000000001);
 }
 
 TEST_CASE("singleton random tree with k > 1",
@@ -117,7 +100,7 @@ TEST_CASE("singleton random tree with k > 1",
 
     auto q = found[0];
     REQUIRE(std::abs(q[0] - 0.28f) < 0.01f);
-    REQUIRE(std::abs(q[0] - 2.09f) < 0.01f);
+    REQUIRE(std::abs(q[1] - 2.09f) < 0.01f);
 }
 
 TEST_CASE("random tree with k > tree size", "[kdtree][vector]")
@@ -150,16 +133,16 @@ TEST_CASE("random tree with k > tree size", "[kdtree][vector]")
 
 TEST_CASE("random tree with k < tree size", "[kdtree][vector][abs]")
 {
-    using point = Point3D_2;
+    using point = Vector3d;
     using kdtree = spats::kdtree<point, double>;
     constexpr auto dist = spats::L2sq<point, double>;
 
     std::vector<point> points;
-    points.emplace_back(94.29, 77.56, 27.34);
-    points.emplace_back(83.24, 34.92, 24.6);
-    points.emplace_back(31.72, 71.77, 86.23);
-    points.emplace_back(13.79, 51.14, 9.46);
-    points.emplace_back(31.66, 72.02, 45.94);
+    points.push_back(point{94.29, 77.56, 27.34});
+    points.push_back(point{83.24, 34.92, 24.6});
+    points.push_back(point{31.72, 71.77, 86.23});
+    points.push_back(point{13.79, 51.14, 9.46});
+    points.push_back(point{31.66, 72.02, 45.94});
     kdtree index(points.begin(), points.end(), dist);
 
     point const p{49.88, 98.03, 80.90};
@@ -178,42 +161,23 @@ TEST_CASE("random tree with k < tree size", "[kdtree][vector][abs]")
     REQUIRE(std::abs(q2[2] - 45.94) < 0.01);
 }
 
-TEST_CASE("empty tree with k < 0", "[kdtree][vector][invalid_argument]")
-{
-    using point = std::vector<int>;
-    std::vector<point> points;
-    spats::kdtree<point, int> index(points.begin(), points.end(),
-                                    spats::L2sq<point, int>);
-
-    point const & p{0, 0};
-    REQUIRE_THROWS_AS(index.nearest_to(p, -1), std::invalid_argument);
-}
-
-TEST_CASE("random tree with k < 0", "[kdtree][vector][invalid_argument]")
-{
-    using point = std::vector<double>;
-    std::vector<point> points;
-    points.push_back(point{161.8, 41.5});
-    points.push_back(point{283.0, 209.6});
-    spats::kdtree<point> index(points.begin(), points.end(),
-                               spats::L2sq<point, double>);
-
-    point const & p{257.4, 493.2};
-    REQUIRE_THROWS_AS(index.nearest_to(p, -3), std::invalid_argument);
-}
-
 TEST_CASE("random tree with negative values but positive query",
           "[kdtree][vector][abs]")
 {
     using point = std::vector<double>;
+    using kdtree = spats::kdtree<point, double>;
+    constexpr auto dist = spats::L2sq<point, double>;
+
     std::vector<point> points;
     points.push_back(point{-68.05, -0.67});
     points.push_back(point{12.1, 51.7});
-    spats::kdtree<point> index(points.begin(), points.end(),
-                               spats::L2sq<point, double>);
+    UNSCOPED_INFO("points size: " << points.size());
+    kdtree index(points.begin(), points.end(), dist);
 
-    point const & p{1.2, 0};
-    auto found = index.nearest_to(p, 1);
+    point const p{1.2, 0};
+    INFO("about to search");
+    auto found = index.nearest_to(p);
+    INFO("finished search");
 
     REQUIRE(found.size() == 1);
 
@@ -233,7 +197,7 @@ TEST_CASE("random tree with negative values and query", "[kdtree][vector]")
                                     spats::L2sq<point, int>);
 
     point const p{-3, -2};
-    auto found = index.nearest_to(p, 1);
+    auto found = index.nearest_to(p);
     REQUIRE(found.size() == 1);
 
     point const & q = found.back();
@@ -250,8 +214,8 @@ TEST_CASE("query just outside of bounding box", "[kdtree][vector][abs]")
     spats::kdtree<point> index(points.begin(), points.end(),
                                spats::L2sq<point, double>);
 
-    point const & p{0.06863, 0.37821};
-    auto found = index.nearest_to(p, 1);
+    point const p{0.06863, 0.37821};
+    auto found = index.nearest_to(p);
     REQUIRE(found.size() == 1);
 
     point const & q = found.back();
@@ -269,7 +233,7 @@ TEST_CASE("query far outside of bounding box", "[kdtree][vector]")
                                     spats::L2sq<point, int>);
 
     point const p{-2781, 2009};
-    auto found = index.nearest_to(p, 1);
+    auto found = index.nearest_to(p);
     REQUIRE(found.size() == 1);
 
     point const & q = found.back();
@@ -289,5 +253,5 @@ TEST_CASE("nearest_to incompatible input point",
     kdtree index(points.begin(), points.end(), dist);
 
     point const p{0, 1};
-    REQUIRE_THROWS_AS(index.nearest_within(p, 1, 1), std::invalid_argument);
+    REQUIRE_THROWS_AS(index.nearest_to(p), std::invalid_argument);
 }

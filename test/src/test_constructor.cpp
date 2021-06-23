@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include "kdtree.hpp"
+#include "spatula/kdtree.hpp"
 #include <vector>
 #include <stdexcept>
 
