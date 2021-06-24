@@ -1,37 +1,41 @@
+// project
 #include <catch2/catch.hpp>
 #include "spatula/kdtree.hpp"
 #include "spatula/geometry.hpp"
 
+// point types
 #include "util.hpp"
 #include <vector>
 
+// utilities
 #include <cstdlib>
 #include <stdexcept>
 
 TEST_CASE("empty tree", "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    constexpr auto dist = spatula::L2<point, int>;
+    using kdtree = spatula::kdtree<point>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
-    spatula::kdtree<point, int> index(points.begin(), points.end());
+    spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{0, 0};
-    auto found = index.nearest_within(p, dist, 1, 1);
+    auto found = index.nearest_within(p, L2, 1, 1);
     REQUIRE(found.empty());
 }
 
 TEST_CASE("singleton integer point tree with k = 0", "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    constexpr auto dist = spatula::L2<point, int>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{0, 0});
-    spatula::kdtree<point, int> index(points.begin(), points.end());
+    spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{0, 0};
-    auto found = index.nearest_within(p, dist, 1, 0);
+    auto found = index.nearest_within(p, L2, 1, 0);
     REQUIRE(found.empty());
 }
 
@@ -39,14 +43,14 @@ TEST_CASE("singleton real point tree with points within radius",
           "[kdtree][vector][abs]")
 {
     using point = std::vector<double>;
-    constexpr auto dist = spatula::L2<point, double>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{3.909, 6.154});
-    spatula::kdtree<point, double> index(points.begin(), points.end());
+    spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{8.514, 6.342};
-    auto found = index.nearest_within(p, dist, 5.0, 3);
+    auto found = index.nearest_within(p, L2, 5.0, 3);
     REQUIRE(found.size() == 1);
 
 
@@ -59,8 +63,8 @@ TEST_CASE("random integer point tree with no points within radius",
           "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    using kdtree = spatula::kdtree<point, int>;
-    constexpr auto dist = spatula::L2<point, int>;
+    using kdtree = spatula::kdtree<point>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{65, 64});
@@ -69,7 +73,7 @@ TEST_CASE("random integer point tree with no points within radius",
     kdtree index(points.begin(), points.end());
 
     point const p{4, 67};
-    auto found = index.nearest_within(p, dist, 40, 2);
+    auto found = index.nearest_within(p, L2, 40, 2);
     REQUIRE(found.empty());
 }
 
@@ -78,8 +82,8 @@ TEST_CASE(
     "[kdtree][vector]")
 {
     using point = std::vector<int>;
-    using kdtree = spatula::kdtree<point, int>;
-    constexpr auto dist = spatula::L2<point, int>;
+    using kdtree = spatula::kdtree<point>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{4, -1});
@@ -91,7 +95,7 @@ TEST_CASE(
 
     point const p{9, 5};
     size_t const k = 3;
-    auto found = index.nearest_within(p, dist, 10, k);
+    auto found = index.nearest_within(p, L2, 10, k);
     REQUIRE(found.size() == 2);
 
     point const & q1 = found[0];
@@ -108,8 +112,8 @@ TEST_CASE(
     "[kdtree][Vector3d][abs]")
 {
     using point = Vector3d;
-    using kdtree = spatula::kdtree<point, double>;
-    constexpr auto dist = spatula::L2<point, double>;
+    using kdtree = spatula::kdtree<point>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{75.892, -0.514, 53.958});
@@ -118,7 +122,7 @@ TEST_CASE(
 
     point const p{58.711, -88.995, 20.744};
     size_t const k = 3;
-    auto found = index.nearest_within(p, dist, 150.0, k);
+    auto found = index.nearest_within(p, L2, 150.0, k);
     REQUIRE(found.size() == k);
 
     point const & q1 = found[0];
@@ -136,8 +140,8 @@ TEST_CASE("random tree with r = 0",
           "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<double>;
-    using kdtree = spatula::kdtree<point, double>;
-    constexpr auto dist = spatula::L2<point, double>;
+    using kdtree = spatula::kdtree<point>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{13.29, -20.3});
@@ -145,7 +149,7 @@ TEST_CASE("random tree with r = 0",
     kdtree index(points.begin(), points.end());
 
     point const p{93.2, -83.0};
-    REQUIRE_THROWS_AS(index.nearest_within(p, dist, 0, 1),
+    REQUIRE_THROWS_AS(index.nearest_within(p, L2, 0, 1),
                       std::invalid_argument);
 }
 
@@ -153,8 +157,8 @@ TEST_CASE("random tree with negative r",
           "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<double>;
-    using kdtree = spatula::kdtree<point, double>;
-    constexpr auto dist = spatula::L2<point, double>;
+    using kdtree = spatula::kdtree<point>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{-30, 20});
@@ -162,21 +166,21 @@ TEST_CASE("random tree with negative r",
     kdtree index(points.begin(), points.end());
 
     point const p{-2, -3};
-    REQUIRE_THROWS_AS(index.nearest_within(p, dist, -2, 13),
+    REQUIRE_THROWS_AS(index.nearest_within(p, L2, -2, 13),
                       std::invalid_argument);
 }
 
 TEST_CASE("incompatible input point", "[kdtree][vector][invalid_argument]")
 {
     using point = std::vector<int>;
-    using kdtree = spatula::kdtree<point, int>;
-    constexpr auto dist = spatula::L2<point, int>;
+    using kdtree = spatula::kdtree<point>;
+    constexpr auto L2 = spatula::L2<point>;
 
     std::vector<point> points;
     points.push_back(point{2, 3});
     kdtree index(points.begin(), points.end());
 
     point const p{0, 1, 2};
-    REQUIRE_THROWS_AS(index.nearest_within(p, dist, 1, 1),
+    REQUIRE_THROWS_AS(index.nearest_within(p, L2, 1, 1),
                       std::invalid_argument);
 }

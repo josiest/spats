@@ -1,6 +1,9 @@
 #ifndef SPATULA_KDTREE_HPP
 #define SPATULA_KDTREE_HPP
 
+// templates
+#include <type_traits>
+
 // resource handlers
 #include <vector>
 #include <memory>
@@ -9,7 +12,6 @@
 // utilities
 #include <limits>
 #include <stdexcept>
-#include "spatula/geometry.hpp"
 
 // functional interface/algorithms
 #include <algorithm>
@@ -27,7 +29,7 @@ namespace spatula {
  * The generic point class should implement `std::size` and `operator[]` for as
  * many dimensions as `std::size` returns.
  */
-template<class point, typename num_t = double>
+template<class point>
 class kdtree {
 private:
     struct node {
@@ -176,9 +178,15 @@ private:
     // find the nearest k points to p
     //  assumes q is not null, k is positive, r is either null or positive
     template<typename distance_fn>
-    std::vector<std::pair<point, num_t>>
-    nearest_to(point const & p, node * q, num_t r, distance_fn distance,
-               size_t depth, size_t k) const
+
+    auto nearest_to(point const & p, node * q,
+                    typename std::decay<decltype(p[0])>::type r,
+                    distance_fn distance,
+                    size_t depth, size_t k) const
+
+        -> std::vector<std::pair<
+               point, typename std::decay<decltype(p[0])>::type
+           >>
     {
         check_rep();
 #ifdef DEBUG
@@ -193,6 +201,7 @@ private:
         }
 #endif
         // define the match type and how to compare/reduce them
+        using num_t = typename std::decay<decltype(p[0])>::type;
         using match_t = std::pair<point, num_t>;
         auto cmp_by_distance = [](match_t const & a, match_t const & b) {
             return a.second < b.second;
@@ -307,6 +316,15 @@ public:
         root = std::make_unique<node>(std::vector<point>(begin, end), 0);
         check_rep();
     }
+    /**
+     * Create a kdtree from a vector of points
+     *
+     * :param points: the points to intialize the kdtree with
+     *
+     * :throws: `std::invalid_argument` if any item has inconsistent dimensions
+     */
+    kdtree(std::vector<point> const & points)
+        : kdtree<point>(points.begin(), points.end()) {}
 
     /**
      * Find the nearest k points to p.
@@ -338,7 +356,9 @@ public:
         // otherwise call recursive search
 
         // since radius isn't specified for nearest_to, defualt to max possible
+        using num_t = typename std::decay<decltype(p[0])>::type;
         auto const max_radius = std::numeric_limits<num_t>::max();
+
         auto nearest_matches =
             nearest_to(p, root.get(), max_radius, distance, 0, k);
 
@@ -389,7 +409,8 @@ public:
     template<typename distance_fn>
     std::vector<point>
     nearest_within(point const & p, distance_fn distance,
-                   num_t r, size_t k = 1) const
+                   typename std::decay<decltype(p[0])>::type r,
+                   size_t k = 1) const
     {
         check_rep();
         // r must be positive
@@ -407,8 +428,10 @@ public:
         std::vector<point> nearest;
         nearest.reserve(nearest_matches.size());
 
+        // alias the underlying number type for the point
+        using num_t = typename std::decay<decltype(p[0])>::type;
         using match_t = std::pair<point, num_t>;
-        auto to_point = [](auto const & match) { return match.first; };
+        auto to_point = [](match_t const & match) { return match.first; };
 
         std::transform(nearest_matches.begin(), nearest_matches.end(),
                        std::back_inserter(nearest), to_point);
