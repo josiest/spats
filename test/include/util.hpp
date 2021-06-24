@@ -23,6 +23,16 @@ inline ostream & operator<<(ostream & os, vector<num_t> const & v)
 
 struct Vector2i {
     int x, y;
+    inline int & operator[](size_t i) {
+        switch (i) {
+        case 0:
+            return x;
+        case 1:
+            return y;
+        default:
+            throw std::out_of_range{"index must be at most 1"};
+        }
+    }
     inline int const & operator[](size_t i) const {
         switch (i) {
         case 0:
@@ -60,6 +70,19 @@ inline ostream & operator<<(ostream & os, Vector2i const & v)
 
 struct Vector3d {
     double x, y, z;
+    inline double & operator[](size_t i)
+    {
+        switch (i) {
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        default:
+            throw std::out_of_range{"index must be at most 2"};
+        }
+    }
     inline double const & operator[](size_t i) const
     {
         switch (i) {

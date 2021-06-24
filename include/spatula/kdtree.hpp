@@ -215,7 +215,23 @@ private:
 
         // compute the current distance
         match_t current{q->data, distance(p, q->data)};
-        bool const within_radius = current.second < r * r;
+
+        // if r is max value then we don't care about being witihin radius
+        //  so default to true
+        bool within_radius = true;
+        if (r < std::numeric_limits<num_t>::max()) {
+            // otherwise check if current distance is within radius
+
+            // r is given as a normal radius
+            //  in order to make a comparison using the specified norm
+            //  we'll compute the distance between the origin
+            //  and a point on the surface of the sphere of radius r
+            point const origin = {0};
+            point surface = {0};
+            surface[0] = r;
+
+            within_radius = current.second < distance(origin, surface);
+        }
 
         // base case: no children - add current to nearest if within radius
         if (!q->left && within_radius) {
@@ -271,6 +287,8 @@ private:
 
             // sort by distance 
             std::sort(nearest.begin(), nearest.end(), cmp_by_distance);
+
+            // remove any extra values
             if (nearest.size() > k) {
                 nearest.erase(nearest.begin() + k, nearest.end());
             }
