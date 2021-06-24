@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include "spatula/kdtree.hpp"
+#include "spatula/geometry.hpp"
 
 #include "util.hpp"
 #include <vector>

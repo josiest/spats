@@ -1,6 +1,7 @@
 // testing
 #include <catch2/catch.hpp>
 #include "spatula/kdtree.hpp"
+#include "spatula/geometry.hpp"
 
 // data structures
 #include "util.hpp"
@@ -13,12 +14,13 @@
 TEST_CASE("empty tree with k = 0", "[kdtree][vector]")
 {
     using point = std::vector<int>;
+    auto constexpr dist = spatula::L2<point, int>;
+
     std::vector<point> points;
-    spatula::kdtree<point, int> index(points.begin(), points.end(),
-                                      spatula::L2<point, int>);
+    spatula::kdtree<point, int> index(points.begin(), points.end());
 
     point const p{0, 0};
-    auto found = index.nearest_to(p, 0);
+    auto found = index.nearest_to(p, dist, 0);
 
     REQUIRE(found.empty());
 }
@@ -26,12 +28,13 @@ TEST_CASE("empty tree with k = 0", "[kdtree][vector]")
 TEST_CASE("empty tree with k = 1", "[kdtree][vector]")
 {
     using point = std::vector<float>;
+    auto constexpr dist = spatula::L2<point, float>;
+
     std::vector<point> points;
-    spatula::kdtree<point, float> index(points.begin(), points.end(),
-                                        spatula::L2<point, float>);
+    spatula::kdtree<point, float> index(points.begin(), points.end());
 
     point const p{1.0f, 2.0f};
-    auto found = index.nearest_to(p, 1);
+    auto found = index.nearest_to(p, dist, 1);
 
     REQUIRE(found.empty());
 }
@@ -39,13 +42,14 @@ TEST_CASE("empty tree with k = 1", "[kdtree][vector]")
 TEST_CASE("singleton tree with k = 0", "[kdtree][vector]")
 {
     using point = std::vector<double>;
+    auto constexpr dist = spatula::L2<point, double>;
+
     std::vector<point> points;
     points.push_back(point{0, 0});
-    spatula::kdtree<point> index(points.begin(), points.end(),
-                                 spatula::L2<point, double>);
+    spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{0.0, 0.0};
-    auto found = index.nearest_to(p, 0);
+    auto found = index.nearest_to(p, dist, 0);
 
     REQUIRE(found.empty());
 }
@@ -53,13 +57,14 @@ TEST_CASE("singleton tree with k = 0", "[kdtree][vector]")
 TEST_CASE("singleton origin tree with k = 1, p = origin", "[kdtree][vector]")
 {
     using point = std::vector<int>;
+    auto constexpr dist = spatula::L2<point, int>;
+
     std::vector<point> points;
     points.push_back(point{0, 0});
-    spatula::kdtree<point, int> index(points.begin(), points.end(),
-                                      spatula::L2<point, int>);
+    spatula::kdtree<point, int> index(points.begin(), points.end());
 
     point const p{0, 0};
-    auto found = index.nearest_to(p, 1);
+    auto found = index.nearest_to(p, dist, 1);
 
     REQUIRE(found.size() == 1);
     REQUIRE(found[0][0] == 0);
@@ -70,13 +75,14 @@ TEST_CASE("singleton random tree with k = 1",
           "[kdtree][vector][abs]")
 {
     using point = std::vector<double>;
+    auto constexpr dist = spatula::L2<point, double>;
+
     std::vector<point> points;
     points.push_back(point{3.837089043, 3.367744091});
-    spatula::kdtree<point> index(points.begin(), points.end(),
-                                 spatula::L2<point, double>);
+    spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{8.368067038, 3.221732361};
-    auto found = index.nearest_to(p, 1);
+    auto found = index.nearest_to(p, dist, 1);
 
     REQUIRE(found.size() == 1);
     point const & q = found[0];
@@ -88,13 +94,14 @@ TEST_CASE("singleton random tree with k > 1",
           "[kdtree][vector][abs]")
 {
     using point = std::vector<float>;
+    auto constexpr dist = spatula::L2<point, float>;
+
     std::vector<point> points;
     points.push_back(point{0.28f, 2.09f});
-    spatula::kdtree<point, float> index(points.begin(), points.end(),
-                                        spatula::L2<point, float>);
+    spatula::kdtree<point, float> index(points.begin(), points.end());
 
     point const p{12.35f, 5.95f};
-    auto found = index.nearest_to(p, 3);
+    auto found = index.nearest_to(p, dist, 3);
 
     REQUIRE(found.size() == 1);
 
@@ -106,15 +113,16 @@ TEST_CASE("singleton random tree with k > 1",
 TEST_CASE("random tree with k > tree size", "[kdtree][vector]")
 {
     using point = std::vector<int>;
+    auto constexpr dist = spatula::L2<point, int>;
+
     std::vector<point> points;
     points.push_back(point{30, 43});
     points.push_back(point{85, 31});
     points.push_back(point{80, 43});
-    spatula::kdtree<point, int> index(points.begin(), points.end(),
-                                      spatula::L2<point, int>);
+    spatula::kdtree<point, int> index(points.begin(), points.end());
 
     point const p{40, 89};
-    auto found = index.nearest_to(p, 4);
+    auto found = index.nearest_to(p, dist, 4);
 
     REQUIRE(found.size() == 3);
 
@@ -143,10 +151,10 @@ TEST_CASE("random tree with k < tree size", "[kdtree][vector][abs]")
     points.push_back(point{31.72, 71.77, 86.23});
     points.push_back(point{13.79, 51.14, 9.46});
     points.push_back(point{31.66, 72.02, 45.94});
-    kdtree index(points.begin(), points.end(), dist);
+    kdtree index(points.begin(), points.end());
 
     point const p{49.88, 98.03, 80.90};
-    auto found = index.nearest_to(p, 2);
+    auto found = index.nearest_to(p, dist, 2);
 
     REQUIRE(found.size() == 2);
     
@@ -172,11 +180,11 @@ TEST_CASE("random tree with negative values but positive query",
     points.push_back(point{-68.05, -0.67});
     points.push_back(point{12.1, 51.7});
     UNSCOPED_INFO("points size: " << points.size());
-    kdtree index(points.begin(), points.end(), dist);
+    kdtree index(points.begin(), points.end());
 
     point const p{1.2, 0};
     INFO("about to search");
-    auto found = index.nearest_to(p);
+    auto found = index.nearest_to(p, dist);
     INFO("finished search");
 
     REQUIRE(found.size() == 1);
@@ -189,15 +197,16 @@ TEST_CASE("random tree with negative values but positive query",
 TEST_CASE("random tree with negative values and query", "[kdtree][vector]")
 {
     using point = std::vector<int>;
+    auto constexpr dist = spatula::L2<point, int>;
+
     std::vector<point> points;
     points.push_back(point{-2, 0});
     points.push_back(point{13, -23});
     points.push_back(point{-29, -32});
-    spatula::kdtree<point, int> index(points.begin(), points.end(),
-                                      spatula::L2<point, int>);
+    spatula::kdtree<point, int> index(points.begin(), points.end());
 
     point const p{-3, -2};
-    auto found = index.nearest_to(p);
+    auto found = index.nearest_to(p, dist);
     REQUIRE(found.size() == 1);
 
     point const & q = found.back();
@@ -208,14 +217,15 @@ TEST_CASE("random tree with negative values and query", "[kdtree][vector]")
 TEST_CASE("query just outside of bounding box", "[kdtree][vector][abs]")
 {
     using point = std::vector<double>;
+    auto constexpr dist = spatula::L2<point, double>;
+
     std::vector<point> points;
     points.push_back(point{0.32472, 0.63294});
     points.push_back(point{0.06862, 0.63722});
-    spatula::kdtree<point> index(points.begin(), points.end(),
-                                 spatula::L2<point, double>);
+    spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{0.06863, 0.37821};
-    auto found = index.nearest_to(p);
+    auto found = index.nearest_to(p, dist);
     REQUIRE(found.size() == 1);
 
     point const & q = found.back();
@@ -226,14 +236,15 @@ TEST_CASE("query just outside of bounding box", "[kdtree][vector][abs]")
 TEST_CASE("query far outside of bounding box", "[kdtree][vector]")
 {
     using point = std::vector<int>;
+    auto constexpr dist = spatula::L2<point, int>;
+
     std::vector<point> points;
     points.push_back(point{-3, 1});
     points.push_back(point{-1, 9});
-    spatula::kdtree<point, int> index(points.begin(), points.end(),
-                                      spatula::L2<point, int>);
+    spatula::kdtree<point, int> index(points.begin(), points.end());
 
     point const p{-2781, 2009};
-    auto found = index.nearest_to(p);
+    auto found = index.nearest_to(p, dist);
     REQUIRE(found.size() == 1);
 
     point const & q = found.back();
@@ -250,8 +261,8 @@ TEST_CASE("nearest_to incompatible input point",
 
     std::vector<point> points;
     points.push_back(point{-1, 2, 13});
-    kdtree index(points.begin(), points.end(), dist);
+    kdtree index(points.begin(), points.end());
 
     point const p{0, 1};
-    REQUIRE_THROWS_AS(index.nearest_to(p), std::invalid_argument);
+    REQUIRE_THROWS_AS(index.nearest_to(p, dist), std::invalid_argument);
 }

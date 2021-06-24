@@ -9,6 +9,7 @@
 // utilities
 #include <limits>
 #include <stdexcept>
+#include "spatula/geometry.hpp"
 
 // functional interface/algorithms
 #include <algorithm>
@@ -19,38 +20,6 @@
 #endif
 
 namespace spatula {
-
-/**
- * A function pointer type for distance functions.
- */
-template<class point, typename num_t = double>
-using distance_fn = num_t(*)(point const &, point const &);
-
-/**
- * Compute the squared distance between two points under the L2 norm
- *
- * :param a: one of the two points to find the distance between
- * :param b: the other of the two points to find the distance between
- *
- * :throws: invalid_argument if a and b size don't match
- *
- * :return: the L2 squared distance between a and b
- */
-template<class point, typename num_t>
-num_t L2(point const & a, point const & b)
-{
-    // can't compute the distance between points in different dimensions
-    if (std::size(a) != std::size(b)) {
-        throw std::invalid_argument{"points must be the same dimension!"};
-    }
-    // compute the sum of the squares of the difference
-    num_t dist = 0;
-    for (size_t i = 0; i < std::size(a); i++) {
-        num_t const e = a[i]-b[i];
-        dist += e*e;
-    }
-    return dist;
-}
 
 /**
  * A simple kd-tree implementation
@@ -129,7 +98,6 @@ private:
      * - no points appear twice in the tree
      */
     std::unique_ptr<node> root;
-    distance_fn<point, num_t> distance;
 
     /* Abstraction Function
      *
@@ -207,8 +175,10 @@ private:
 
     // find the nearest k points to p
     //  assumes q is not null, k is positive, r is either null or positive
+    template<typename distance_fn>
     std::vector<std::pair<point, num_t>>
-    nearest_to(point const & p, node * q, size_t depth, num_t r, size_t k) const
+    nearest_to(point const & p, node * q, num_t r, distance_fn distance,
+               size_t depth, size_t k) const
     {
         check_rep();
 #ifdef DEBUG
@@ -258,7 +228,7 @@ private:
         // it may be the case that the preffered branch is null
         // if so just skip it and leave nearest as empty
         if (preferred) {
-            nearest = nearest_to(p, preferred, depth+1, r, k);
+            nearest = nearest_to(p, preferred, r, distance, depth+1, k);
         }
         num_t preferred_best = std::numeric_limits<num_t>::max();
         if (!nearest.empty()) {
@@ -283,7 +253,7 @@ private:
         //  or not enough points have ben discovered yet
         if (other && (!axis_too_far || !enough_points)) {
 
-            auto other_nearest = nearest_to(p, other, depth+1, r, k);
+            auto other_nearest = nearest_to(p, other, r, distance, depth+1, k);
 
             // merge the two nearest vectors
             nearest.reserve(nearest.size() + other_nearest.size());
@@ -324,14 +294,11 @@ public:
      *
      * :param begin: pointer to the first point
      * :param end: pointer past the last point
-     * :param distance: function to determine the distance between points
      *
      * :throws: `std::invalid_argument` if any item has inconsistent dimensions
      */
     template<class InputIt>
-    kdtree(InputIt begin, InputIt end,
-           distance_fn<point, num_t> distance)
-        : distance{distance}
+    kdtree(InputIt begin, InputIt end)
     {
         // if no points, leave root as null
         if (begin == end) {
@@ -359,7 +326,9 @@ public:
      *
      *  The returned points will be sorted in order of nearest to p.
      */
-    std::vector<point> nearest_to(point const & p, size_t k = 1) const
+    template<typename distance_fn>
+    std::vector<point> nearest_to(point const & p, distance_fn distance,
+                                  size_t k = 1) const
     {
         check_rep();
         // base case: k = 0 or root is null - return an empty vector
@@ -370,14 +339,18 @@ public:
 
         // since radius isn't specified for nearest_to, defualt to max possible
         auto const max_radius = std::numeric_limits<num_t>::max();
-        auto nearest_matches = nearest_to(p, root.get(), 0, max_radius, k);
+        auto nearest_matches =
+            nearest_to(p, root.get(), max_radius, distance, 0, k);
 
         // convert match vector to point vector
         std::vector<point> nearest;
         nearest.reserve(nearest_matches.size());
+
+        using match_t = std::pair<point, num_t>;
+        auto to_point = [](match_t const & match) { return match.first; };
+
         std::transform(nearest_matches.begin(), nearest_matches.end(),
-                       std::back_inserter(nearest),
-                       [](auto const & match) { return match.first; });
+                       std::back_inserter(nearest), to_point);
 
         return nearest;
     }
@@ -386,8 +359,17 @@ public:
      * Find the nearest k points to p within a given radius
      *
      * :param p: the point to compare to
+     *
+     * :param distance: function to determine the distance between points
+     *
+     * :param r: the radius with respect to `distance`
+     *
+     *  Note that `r` is in respect to `distance`. For example, if
+     *  `distance` returns the square of the distance between two points
+     *  (a common optimization when using the L2 norm) then `r` should be
+     *  the square of a radius.
+     *
      * :param k: the maximum number of points to return
-     * :param r: the radius 
      *
      * :throws:
      *
@@ -404,8 +386,10 @@ public:
      *
      *  The returned points will be sorted in order of nearest to p.
      */
+    template<typename distance_fn>
     std::vector<point>
-    nearest_within(point const & p, num_t r, size_t k = 1) const
+    nearest_within(point const & p, distance_fn distance,
+                   num_t r, size_t k = 1) const
     {
         check_rep();
         // r must be positive
@@ -417,14 +401,17 @@ public:
             return std::vector<point>();
         }
         // otherwise call recursive search
-        auto nearest_matches = nearest_to(p, root.get(), 0, r, k);
+        auto nearest_matches = nearest_to(p, root.get(), r, distance, 0, k);
 
         // convert match vector to point vector
         std::vector<point> nearest;
         nearest.reserve(nearest_matches.size());
+
+        using match_t = std::pair<point, num_t>;
+        auto to_point = [](auto const & match) { return match.first; };
+
         std::transform(nearest_matches.begin(), nearest_matches.end(),
-                       std::back_inserter(nearest),
-                       [](auto const & match) { return match.first; });
+                       std::back_inserter(nearest), to_point);
 
         return nearest;
     }
