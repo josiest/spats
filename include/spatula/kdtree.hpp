@@ -300,9 +300,8 @@ private:
 
         // if current best is not good enough but there aren't enough nearest
         // values yet, just add current and return
-        if (it == nearest.end() && nearest.size() < k) {
+        if (it == nearest.end() && nearest.size() < k && within_radius) {
             nearest.push_back(current);
-            return nearest;
         }
         // otherwise if current best isn't good enough just return
         if (it == nearest.end()) {
