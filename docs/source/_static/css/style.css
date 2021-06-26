@@ -3,3 +3,10 @@
     padding-bottom: 10px;
     padding-top: 10px;
 }
+.sig.sig-object.cpp {
+    font-size: 0.8em;
+    background-color: whitesmoke;
+}
+dd {
+    padding-bottom: 10px;
+}
