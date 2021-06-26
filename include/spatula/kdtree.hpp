@@ -318,10 +318,10 @@ public:
     /**
      * Create a kdtree from an iterator of points.
      *
-     * :param begin: pointer to the first point
-     * :param end: pointer past the last point
+     * @param begin pointer to the first point
+     * @param end   pointer past the last point
      *
-     * :throws: `std::invalid_argument` if any item has inconsistent dimensions
+     * @throw `std::invalid_argument` if any item has inconsistent dimensions
      */
     template<class InputIt>
     kdtree(InputIt begin, InputIt end)
@@ -336,9 +336,9 @@ public:
     /**
      * Create a kdtree from a vector of points
      *
-     * :param points: the points to intialize the kdtree with
+     * @param points the points to intialize the kdtree with
      *
-     * :throws: `std::invalid_argument` if any item has inconsistent dimensions
+     * @throw `std::invalid_argument` if any item has inconsistent dimensions
      */
     kdtree(std::vector<point> const & points)
         : kdtree<point>(points.begin(), points.end()) {}
@@ -346,20 +346,19 @@ public:
     /**
      * Find the nearest k points to p.
      *
-     * :param p: the point to compare to
-     * :param k: the maximum number of points to return
+     * @param p         the point to compare to
+     * @param distance  computes the distance between two points
+     * @param k         the maximum number of points to return
      *
-     * :throws:
+     * @throw `std::invalid_argument` if p has a different dimension than the
+     *        points in the tree.
      *
-     *  std::invalid_argument if p has a different dimension than the points in
-     *  the tree.
+     * @return  the `k` points nearest to `p`
      *
-     * :return: the k points nearest to p
+     *  If the tree has less than `k` points, then as many points as are
+     *  in the tree will be returned.
      *
-     *  If the tree has less than k points, then as many points as are in the
-     *  tree will be returned.
-     *
-     *  The returned points will be sorted in order of nearest to p.
+     *  The returned points will be sorted in order of nearest to `p`.
      */
     template<typename distance_fn>
     std::vector<point> nearest_to(point const & p, distance_fn distance,
@@ -393,35 +392,24 @@ public:
     }
 
     /**
-     * Find the nearest k points to p within a given radius
+     * Find the nearest `k` points to `p` within radius `r`
      *
-     * :param p: the point to compare to
+     * @param p         the point to compare to
+     * @param distance  computes the distance between two points
+     * @param r         the radius with respect to `distance`
+     * @param k         the maximum number of points to return
      *
-     * :param distance: function to determine the distance between points
+     * @throw `std::invalid_argument` if `r` is not positive
+     *        `std::invlaid_argument` if `p` is not the same dimension as the
+     *        points in the tree.
      *
-     * :param r: the radius with respect to `distance`
+     * @return  the `k` points nearest to `p` within `r` radius of `p`
      *
-     *  Note that `r` is in respect to `distance`. For example, if
-     *  `distance` returns the square of the distance between two points
-     *  (a common optimization when using the L2 norm) then `r` should be
-     *  the square of a radius.
+     *  If the tree has less than `k` points, or if there are fewer than
+     *  `k` points within `r` radius of `p`, then as many points as
+     *  there are that satisfy those conditions will be returned.
      *
-     * :param k: the maximum number of points to return
-     *
-     * :throws:
-     *
-     *  std::invalid_argument if r is not positive
-     *
-     *  std::invlaid_argument if p is not the same dimension as the points in
-     *  the tree.
-     *
-     * :return: the k points nearest to p within r radius of p
-     *
-     *  If the tree has less than k points, or if there are fewer than k points
-     *  within r radius of p, then as many points as there are that satisfy
-     *  those conditions will be returned.
-     *
-     *  The returned points will be sorted in order of nearest to p.
+     *  The returned points will be sorted in order of nearest to `p`.
      */
     template<typename distance_fn>
     std::vector<point>
