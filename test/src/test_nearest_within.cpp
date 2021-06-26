@@ -123,14 +123,14 @@ TEST_CASE(
     point const p{58.711, -88.995, 20.744};
     size_t const k = 3;
     auto found = index.nearest_within(p, L2, 150.0, k);
-    REQUIRE(found.size() == k);
+    REQUIRE(found.size() == 2);
 
     point const & q1 = found[0];
     REQUIRE(std::abs(q1[0]-(75.892)) < 0.001);
     REQUIRE(std::abs(q1[1]-(-0.514)) < 0.001);
     REQUIRE(std::abs(q1[2]-(53.958)) < 0.001);
 
-    point const & q2 = found[0];
+    point const & q2 = found[1];
     REQUIRE(std::abs(q2[0]-(7.810)) < 0.001);
     REQUIRE(std::abs(q2[1]-(-16.497)) < 0.001);
     REQUIRE(std::abs(q2[2]-(70.660)) < 0.001);
