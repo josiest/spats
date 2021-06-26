@@ -353,12 +353,12 @@ public:
      * @throw std::invalid_argument if p has a different dimension than the
      *        points in the tree.
      *
-     * @return  the `k` points nearest to `p`.
+     * @return  the k points nearest to p.
      *
-     *  If the tree has less than `k` points, then as many points as are
+     *  If the tree has less than k points, then as many points as are
      *  in the tree will be returned.
      *
-     *  The returned points will be sorted in order of nearest to `p`.
+     *  The returned points will be sorted in order of nearest to p.
      */
     template<typename distance_fn>
     std::vector<point> nearest_to(point const & p, distance_fn distance,
@@ -392,23 +392,23 @@ public:
     }
 
     /**
-     * Find the nearest `k` points to `p` within radius `r`.
+     * Find the nearest k points to p within radius r.
      *
      * @param p         the point to compare to.
      * @param distance  computes the distance between two points.
      * @param r         the radius to find points within.
      * @param k         the maximum number of points to return.
      *
-     * @throw std::invalid_argument if `r` is not positive and if `p` is not
+     * @throw std::invalid_argument if r is not positive and if p is not
      *                              the same dimension as the points in the tree.
      *
-     * @return  the `k` points nearest to `p` within `r` radius of `p`
+     * @return  the k points nearest to p within r radius of p
      *
-     *  If the tree has less than `k` points, or if there are fewer than
-     *  `k` points within `r` radius of `p`, then as many points as
+     *  If the tree has less than k points, or if there are fewer than
+     *  k points within r radius of p, then as many points as
      *  there are that satisfy those conditions will be returned.
      *
-     *  The returned points will be sorted in order of nearest to `p`.
+     *  The returned points will be sorted in order of nearest to p.
      */
     template<typename distance_fn>
     std::vector<point>
