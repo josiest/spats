@@ -20,7 +20,8 @@ endif()
 # add docs subdir if specified
 option(DOCS "Build the documentation" OFF)
 if (DOCS)
-    add_subdirectory(docs)
+    add_subdirectory(docs/doxygen)
+    add_subdirectory(docs/source)
 endif()
 
 add_library(spatula INTERFACE)

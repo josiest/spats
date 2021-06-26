@@ -4,7 +4,7 @@ find_package(Doxygen REQUIRED)
 
 # Doxyfile configuration
 set(DOXYGEN_INPUT_DIR ${spatula_SOURCE_DIR}/include/spatula)
-set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/doxygen)
+set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
 set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
