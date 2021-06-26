@@ -8,12 +8,12 @@ namespace spatula {
 /**
  * Compute the squared distance between two points under the L2 norm
  *
- * :param a: one of the two points to find the distance between
- * :param b: the other of the two points to find the distance between
+ * @param a one of the two points to find the distance between
+ * @param b the other of the two points to find the distance between
  *
- * :throws: invalid_argument if a and b size don't match
+ * @throws std::invalid_argument    if a and b size don't match
  *
- * :return: the L2 squared distance between a and b
+ * @return  the L2 squared distance between a and b
  */
 template<class point>
 auto L2(point const & a, point const & b)
