@@ -10,7 +10,11 @@ Welcome to spatula's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+Docs
+====
 
+.. doxygenclass:: spatula::kdtree
+   :members:
 
 Indices and tables
 ==================

@@ -95,6 +95,9 @@ build
 tags
 
 .idea
+
+# --- Sphinx ---
+
 # sphinx build folder
 _build
 
