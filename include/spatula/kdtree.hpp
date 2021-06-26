@@ -321,7 +321,7 @@ public:
      * @param begin pointer to the first point
      * @param end   pointer past the last point
      *
-     * @throw `std::invalid_argument` if any item has inconsistent dimensions
+     * @throw std::invalid_argument if any item has inconsistent dimensions
      */
     template<class InputIt>
     kdtree(InputIt begin, InputIt end)
@@ -338,7 +338,7 @@ public:
      *
      * @param points the points to intialize the kdtree with
      *
-     * @throw `std::invalid_argument` if any item has inconsistent dimensions
+     * @throw std::invalid_argument if any item has inconsistent dimensions
      */
     kdtree(std::vector<point> const & points)
         : kdtree<point>(points.begin(), points.end()) {}
@@ -350,7 +350,7 @@ public:
      * @param distance  computes the distance between two points
      * @param k         the maximum number of points to return
      *
-     * @throw `std::invalid_argument` if p has a different dimension than the
+     * @throw std::invalid_argument if p has a different dimension than the
      *        points in the tree.
      *
      * @return  the `k` points nearest to `p`
@@ -399,9 +399,8 @@ public:
      * @param r         the radius with respect to `distance`
      * @param k         the maximum number of points to return
      *
-     * @throw `std::invalid_argument` if `r` is not positive
-     *        `std::invlaid_argument` if `p` is not the same dimension as the
-     *        points in the tree.
+     * @throw std::invalid_argument if `r` is not positive and if `p` is not
+     *                              the same dimension as the points in the tree
      *
      * @return  the `k` points nearest to `p` within `r` radius of `p`
      *
