@@ -379,8 +379,8 @@ public:
      * Find the nearest k points to p.
      *
      * @param p         the point to compare to.
-     * @param distance  computes the distance between two points.
      * @param k         the maximum number of points to return.
+     * @param distance  computes the distance between two points.
      *
      * @throw std::invalid_argument if p has a different dimension than the
      *        points in the tree.
@@ -393,9 +393,8 @@ public:
      *  The returned points will be sorted in order of nearest to p.
      */
     template<typename distance_fn = decltype(L2<point>)>
-    std::vector<point> nearest_to(point const & p,
-                                  distance_fn distance = L2<point>,
-                                  size_t k = 1) const
+    std::vector<point> nearest_to(point const & p, size_t k = 1,
+                                  distance_fn distance = L2<point>) const
     {
         check_rep();
         // base case: k = 0 or root is null - return an empty vector
@@ -429,8 +428,8 @@ public:
      *
      * @param p         the point to compare to.
      * @param r         the radius to find points within.
-     * @param distance  computes the distance between two points.
      * @param k         the maximum number of points to return.
+     * @param distance  computes the distance between two points.
      *
      * @throw std::invalid_argument if r is not positive and if p is not
      *                              the same dimension as the points in the tree.
@@ -446,9 +445,8 @@ public:
     template<typename distance_fn = decltype(L2<point>)>
     std::vector<point>
     nearest_within(point const & p,
-                   typename std::decay<decltype(p[0])>::type r,
-                   distance_fn distance = L2<point>,
-                   size_t k = 1) const
+                   typename std::decay<decltype(p[0])>::type r, size_t k = 1,
+                   distance_fn distance = L2<point>) const
     {
         check_rep();
         // r must be positive
