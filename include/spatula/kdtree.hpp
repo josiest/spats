@@ -428,8 +428,8 @@ public:
      * Find the nearest k points to p within radius r.
      *
      * @param p         the point to compare to.
-     * @param distance  computes the distance between two points.
      * @param r         the radius to find points within.
+     * @param distance  computes the distance between two points.
      * @param k         the maximum number of points to return.
      *
      * @throw std::invalid_argument if r is not positive and if p is not
