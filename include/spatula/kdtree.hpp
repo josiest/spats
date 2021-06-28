@@ -443,7 +443,7 @@ public:
      *
      *  The returned points will be sorted in order of nearest to p.
      */
-    template<typename distance_fn>
+    template<typename distance_fn = decltype(L2<point>)>
     std::vector<point>
     nearest_within(point const & p,
                    typename std::decay<decltype(p[0])>::type r,
