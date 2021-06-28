@@ -1,6 +1,8 @@
 #ifndef SPATULA_KDTREE_HPP
 #define SPATULA_KDTREE_HPP
 
+#include "spatula/geometry.hpp"
+
 // templates
 #include <type_traits>
 
@@ -179,7 +181,7 @@ private:
     //  assumes q is not null, k is positive, r is either null or positive
     template<typename distance_fn>
 
-    auto nearest_to(point const & p, node * q,
+    auto _nearest_to(point const & p, node * q,
                     typename std::decay<decltype(p[0])>::type r,
                     distance_fn distance,
                     size_t depth, size_t k) const
@@ -253,7 +255,7 @@ private:
         // it may be the case that the preffered branch is null
         // if so just skip it and leave nearest as empty
         if (preferred) {
-            nearest = nearest_to(p, preferred, r, distance, depth+1, k);
+            nearest = _nearest_to(p, preferred, r, distance, depth+1, k);
         }
         num_t preferred_best = std::numeric_limits<num_t>::max();
         if (!nearest.empty()) {
@@ -278,7 +280,7 @@ private:
         //  or not enough points have ben discovered yet
         if (other && (!axis_too_far || !enough_points)) {
 
-            auto other_nearest = nearest_to(p, other, r, distance, depth+1, k);
+            auto other_nearest = _nearest_to(p, other, r, distance, depth+1, k);
 
             // merge the two nearest vectors
             nearest.reserve(nearest.size() + other_nearest.size());
@@ -390,8 +392,9 @@ public:
      *
      *  The returned points will be sorted in order of nearest to p.
      */
-    template<typename distance_fn>
-    std::vector<point> nearest_to(point const & p, distance_fn distance,
+    template<typename distance_fn = decltype(L2<point>)>
+    std::vector<point> nearest_to(point const & p,
+                                  distance_fn distance = L2<point>,
                                   size_t k = 1) const
     {
         check_rep();
@@ -406,7 +409,7 @@ public:
         auto const max_radius = std::numeric_limits<num_t>::max();
 
         auto nearest_matches =
-            nearest_to(p, root.get(), max_radius, distance, 0, k);
+            _nearest_to(p, root.get(), max_radius, distance, 0, k);
 
         // convert match vector to point vector
         std::vector<point> nearest;
@@ -442,8 +445,9 @@ public:
      */
     template<typename distance_fn>
     std::vector<point>
-    nearest_within(point const & p, distance_fn distance,
+    nearest_within(point const & p,
                    typename std::decay<decltype(p[0])>::type r,
+                   distance_fn distance = L2<point>,
                    size_t k = 1) const
     {
         check_rep();
@@ -456,7 +460,7 @@ public:
             return std::vector<point>();
         }
         // otherwise call recursive search
-        auto nearest_matches = nearest_to(p, root.get(), r, distance, 0, k);
+        auto nearest_matches = _nearest_to(p, root.get(), r, distance, 0, k);
 
         // convert match vector to point vector
         std::vector<point> nearest;

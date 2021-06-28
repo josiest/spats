@@ -21,7 +21,7 @@ TEST_CASE("empty tree", "[kdtree][vector]")
     spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{0, 0};
-    auto found = index.nearest_within(p, L2, 1, 1);
+    auto found = index.nearest_within(p, 1, L2, 1);
     REQUIRE(found.empty());
 }
 
@@ -35,7 +35,7 @@ TEST_CASE("singleton integer point tree with k = 0", "[kdtree][vector]")
     spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{0, 0};
-    auto found = index.nearest_within(p, L2, 1, 0);
+    auto found = index.nearest_within(p, 1, L2, 0);
     REQUIRE(found.empty());
 }
 
@@ -50,7 +50,7 @@ TEST_CASE("singleton real point tree with points within radius",
     spatula::kdtree<point> index(points.begin(), points.end());
 
     point const p{8.514, 6.342};
-    auto found = index.nearest_within(p, L2, 5.0, 3);
+    auto found = index.nearest_within(p, 5.0, L2, 3);
     REQUIRE(found.size() == 1);
 
 
@@ -73,7 +73,7 @@ TEST_CASE("random integer point tree with no points within radius",
     kdtree index(points.begin(), points.end());
 
     point const p{4, 67};
-    auto found = index.nearest_within(p, L2, 40, 2);
+    auto found = index.nearest_within(p, 40, L2, 2);
     REQUIRE(found.empty());
 }
 
@@ -95,7 +95,7 @@ TEST_CASE(
 
     point const p{9, 5};
     size_t const k = 3;
-    auto found = index.nearest_within(p, L2, 10, k);
+    auto found = index.nearest_within(p, 10, L2, k);
     REQUIRE(found.size() == 2);
 
     point const & q1 = found[0];
@@ -122,7 +122,7 @@ TEST_CASE(
 
     point const p{58.711, -88.995, 20.744};
     size_t const k = 3;
-    auto found = index.nearest_within(p, L2, 150.0, k);
+    auto found = index.nearest_within(p, 150.0, L2, k);
     REQUIRE(found.size() == 2);
 
     point const & q1 = found[0];
@@ -149,7 +149,7 @@ TEST_CASE("random tree with r = 0",
     kdtree index(points.begin(), points.end());
 
     point const p{93.2, -83.0};
-    REQUIRE_THROWS_AS(index.nearest_within(p, L2, 0, 1),
+    REQUIRE_THROWS_AS(index.nearest_within(p, 0, L2, 1),
                       std::invalid_argument);
 }
 
@@ -166,7 +166,7 @@ TEST_CASE("random tree with negative r",
     kdtree index(points.begin(), points.end());
 
     point const p{-2, -3};
-    REQUIRE_THROWS_AS(index.nearest_within(p, L2, -2, 13),
+    REQUIRE_THROWS_AS(index.nearest_within(p, -2, L2, 13),
                       std::invalid_argument);
 }
 
@@ -181,6 +181,6 @@ TEST_CASE("incompatible input point", "[kdtree][vector][invalid_argument]")
     kdtree index(points.begin(), points.end());
 
     point const p{0, 1, 2};
-    REQUIRE_THROWS_AS(index.nearest_within(p, L2, 1, 1),
+    REQUIRE_THROWS_AS(index.nearest_within(p, 1, L2, 1),
                       std::invalid_argument);
 }

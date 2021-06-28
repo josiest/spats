@@ -29,13 +29,12 @@ TEST_CASE("empty tree with k = 0", "[kdtree][vector]")
 TEST_CASE("empty tree with k = 1", "[kdtree][vector]")
 {
     using point = std::vector<float>;
-    auto constexpr dist = spatula::L2<point>;
 
     std::vector<point> points;
     spatula::kdtree index(points);
 
     point const p{1.0f, 2.0f};
-    auto found = index.nearest_to(p, dist, 1);
+    auto found = index.nearest_to(p);
 
     REQUIRE(found.empty());
 }
