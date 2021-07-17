@@ -2,6 +2,8 @@
 #define SPATULA_GEOMETRY_HPP
 
 #include <type_traits>
+#include <stdexcept>
+#include <iterator>
 
 namespace spatula {
 

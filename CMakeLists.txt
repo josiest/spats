@@ -29,4 +29,10 @@ if (DOCS)
     add_subdirectory(docs/source)
 endif()
 
+# add examples subdir if specified
+option(EXAMPLES "Build examples" OFF)
+if (EXAMPLES)
+    add_subdirectory(examples/docs)
+endif()
+
 add_library(spatula INTERFACE)
