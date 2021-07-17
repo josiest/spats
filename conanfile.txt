@@ -1,5 +1,5 @@
 [requires]
-catch2/2.13.6
+gtest/cci.20210126
 
 [generators]
 cmake

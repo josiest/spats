@@ -19,7 +19,7 @@
 #include <algorithm>
 
 #ifdef DEBUG
-#include <catch2/catch.hpp>
+#include <iostream>
 #include "util.hpp"
 #endif
 
@@ -45,7 +45,7 @@ private:
         {
 #ifdef DEBUG
             if (points.empty()) {
-                UNSCOPED_INFO("points is empty in node constructor");
+                std::cerr << "points is empty in node constructor" << std::endl;
             }
 #endif
             // sort points by current axis
@@ -123,7 +123,8 @@ private:
         // all points have the same size
         for (auto it = seen.begin(); it != seen.end(); it++) {
             if (std::size(*it) != std::size(seen.front())) {
-                UNSCOPED_INFO("point " << *it << " has inconsistent dimension");
+                std::cerr << "point " << *it << " has inconsistent dimension"
+                          << std::endl;
             }
         }
 #endif
@@ -142,12 +143,13 @@ private:
             }
         }
         catch (std::exception const & e) {
-            UNSCOPED_INFO("Acessing data caused exception: " << e.what());
+            std::cerr << "Acessing data caused exception: " << e.what()
+                      << std::endl;
         }
 
         // no duplicate nodes
         if (std::find(seen.begin(), seen.end(), p->data) != seen.end()) {
-            UNSCOPED_INFO("Duplicate point found: " << p->data);
+            std::cerr << "Duplicate point found: " << p->data << std::endl;
         }
         seen.push_back(p->data);
 
@@ -155,22 +157,20 @@ private:
         if (p->left) {
             // q[d] <= p[d] only if q is a left child of p
             if (p->left->data[axis] > p->data[axis]) {
-                UNSCOPED_INFO("Nodes are not sorted correctly");
-                UNSCOPED_INFO("  "
-                        << p->left->data << " appears before " << p->data
-                        << " but " << p->left->data[axis]
-                        << " > " << p->data[axis]);
+                std::cerr << "Nodes are not sorted correctly" << std::endl
+                          << "  " << p->left->data << " appears before "
+                          << p->data << " but " << p->left->data[axis] << " > "
+                          << p->data[axis] << std::endl;
             }
             check_rep(p->left.get(), seen, depth+1);
         }
         if (p->right) {
             // q[d] > p[d] only if q is a right child of p
             if (p->right->data[axis] <= p->data[axis]) {
-                UNSCOPED_INFO("Nodes are not sorted correctly");
-                UNSCOPED_INFO("  "
-                        << p->right->data << " appears after " << p->data
-                        << " but " << p->right->data[axis]
-                        << " <= " << p->data[axis]);
+                std::cerr << "Nodes are not sorted correctly" << std::endl
+                          << "  " << p->right->data << " appears after "
+                          << p->data << " but " << p->right->data[axis]
+                          << " <= " << p->data[axis] << std::endl;
             }
             check_rep(p->right.get(), seen, depth+1);
         }
@@ -193,13 +193,13 @@ private:
         check_rep();
 #ifdef DEBUG
         if (!q) {
-            UNSCOPED_INFO("q is null");
+            std::cerr << "q is null" << std::endl;
         }
         if (k <= 0) {
-            UNSCOPED_INFO("k is not positive");
+            std::cerr << "k is not positive" << std::endl;
         }
         if (r <= 0) {
-            UNSCOPED_INFO("r is not positive");
+            std::cerr << "r is not positive" << std::endl;
         }
 #endif
         // define the match type and how to compare/reduce them
@@ -304,6 +304,7 @@ private:
         // values yet, just add current and return
         if (it == nearest.end() && nearest.size() < k && within_radius) {
             nearest.push_back(current);
+            return nearest;
         }
         // otherwise if current best isn't good enough just return
         if (it == nearest.end()) {
@@ -312,6 +313,7 @@ private:
         // update best results
         nearest.insert(it, current);
         if (nearest.size() > k) { // remove any excess values
+            //nearest = std::vector(nearest.begin(), nearest.begin()+k);
             nearest.erase(nearest.begin() + k, nearest.end());
         }
         return nearest;

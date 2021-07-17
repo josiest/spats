@@ -1,5 +1,5 @@
 // project
-#include <catch2/catch.hpp>
+#include <gtest/gtest.h>
 #include "spatula/kdtree.hpp"
 #include "spatula/geometry.hpp"
 
@@ -11,7 +11,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
-TEST_CASE("empty tree", "[kdtree][vector]")
+TEST(NearestWithinTest, EmptyTree)
 {
     using point = std::vector<int>;
     using kdtree = spatula::kdtree<point>;
@@ -22,10 +22,10 @@ TEST_CASE("empty tree", "[kdtree][vector]")
 
     point const p{0, 0};
     auto found = index.nearest_within(p, 1, 1, L2);
-    REQUIRE(found.empty());
+    EXPECT_TRUE(found.empty());
 }
 
-TEST_CASE("singleton integer point tree with k = 0", "[kdtree][vector]")
+TEST(NearestWithinTest, SingletonTreeWithKas0)
 {
     using point = std::vector<int>;
     constexpr auto L2 = spatula::L2<point>;
@@ -36,11 +36,10 @@ TEST_CASE("singleton integer point tree with k = 0", "[kdtree][vector]")
 
     point const p{0, 0};
     auto found = index.nearest_within(p, 1, 0, L2);
-    REQUIRE(found.empty());
+    EXPECT_TRUE(found.empty());
 }
 
-TEST_CASE("singleton real point tree with points within radius",
-          "[kdtree][vector][abs]")
+TEST(NearestWithinTest, SingletonTreeWithPointsWithinRadius)
 {
     using point = std::vector<double>;
     constexpr auto L2 = spatula::L2<point>;
@@ -51,16 +50,15 @@ TEST_CASE("singleton real point tree with points within radius",
 
     point const p{8.514, 6.342};
     auto found = index.nearest_within(p, 5.0, 3, L2);
-    REQUIRE(found.size() == 1);
+    EXPECT_EQ(found.size(), 1);
 
 
     point const & q = found.back();
-    REQUIRE(std::abs(q[0] - 3.909) < 0.001);
-    REQUIRE(std::abs(q[1] - 6.154) < 0.001);
+    EXPECT_LT(std::abs(q[0] - 3.909), 0.001);
+    EXPECT_LT(std::abs(q[1] - 6.154), 0.001);
 }
 
-TEST_CASE("random integer point tree with no points within radius",
-          "[kdtree][vector]")
+TEST(NearestWithinTest, RandomTreeWithNoPointsInRadius)
 {
     using point = std::vector<int>;
     using kdtree = spatula::kdtree<point>;
@@ -74,12 +72,10 @@ TEST_CASE("random integer point tree with no points within radius",
 
     point const p{4, 67};
     auto found = index.nearest_within(p, 40, 2, L2);
-    REQUIRE(found.empty());
+    EXPECT_TRUE(found.empty());
 }
 
-TEST_CASE(
-    "random integer point tree with less points within radius than k",
-    "[kdtree][vector]")
+TEST(NearestWithinTest, RandomTreeWithLessPointsInRadiusThanK)
 {
     using point = std::vector<int>;
     using kdtree = spatula::kdtree<point>;
@@ -96,20 +92,18 @@ TEST_CASE(
     point const p{9, 5};
     size_t const k = 3;
     auto found = index.nearest_within(p, 10, k);
-    REQUIRE(found.size() == 2);
+    EXPECT_EQ(found.size(), 2);
 
     point const & q1 = found[0];
-    REQUIRE(q1[0] == 4);
-    REQUIRE(q1[1] == -1);
+    EXPECT_EQ(q1[0], 4);
+    EXPECT_EQ(q1[1], -1);
 
     point const & q2 = found[1];
-    REQUIRE(q2[0] == 5);
-    REQUIRE(q2[1] == -4);
+    EXPECT_EQ(q2[0], 5);
+    EXPECT_EQ(q2[1], -4);
 }
 
-TEST_CASE(
-    "random real point tree with less points in tree than k and negative values"
-    "[kdtree][Vector3d][abs]")
+TEST(NearestWithinTest, RandomTreeWithNegativeValues)
 {
     using point = Vector3d;
     using kdtree = spatula::kdtree<point>;
@@ -123,21 +117,20 @@ TEST_CASE(
     point const p{58.711, -88.995, 20.744};
     size_t const k = 3;
     auto found = index.nearest_within(p, 150.0, k);
-    REQUIRE(found.size() == 2);
+    EXPECT_EQ(found.size(), 2);
 
     point const & q1 = found[0];
-    REQUIRE(std::abs(q1[0]-(75.892)) < 0.001);
-    REQUIRE(std::abs(q1[1]-(-0.514)) < 0.001);
-    REQUIRE(std::abs(q1[2]-(53.958)) < 0.001);
+    EXPECT_LT(std::abs(q1[0]-(75.892)), 0.001);
+    EXPECT_LT(std::abs(q1[1]-(-0.514)), 0.001);
+    EXPECT_LT(std::abs(q1[2]-(53.958)), 0.001);
 
     point const & q2 = found[1];
-    REQUIRE(std::abs(q2[0]-(7.810)) < 0.001);
-    REQUIRE(std::abs(q2[1]-(-16.497)) < 0.001);
-    REQUIRE(std::abs(q2[2]-(70.660)) < 0.001);
+    EXPECT_LT(std::abs(q2[0]-(7.810)), 0.001);
+    EXPECT_LT(std::abs(q2[1]-(-16.497)), 0.001);
+    EXPECT_LT(std::abs(q2[2]-(70.660)), 0.001);
 }
 
-TEST_CASE("random tree with r = 0",
-          "[kdtree][vector][invalid_argument]")
+TEST(NearestWithinTest, RandomTreeWithZeroRadius)
 {
     using point = std::vector<double>;
     using kdtree = spatula::kdtree<point>;
@@ -149,12 +142,10 @@ TEST_CASE("random tree with r = 0",
     kdtree index(points.begin(), points.end());
 
     point const p{93.2, -83.0};
-    REQUIRE_THROWS_AS(index.nearest_within(p, 0, 1),
-                      std::invalid_argument);
+    EXPECT_THROW(index.nearest_within(p, 0, 1), std::invalid_argument);
 }
 
-TEST_CASE("random tree with negative r",
-          "[kdtree][vector][invalid_argument]")
+TEST(NearestWithinTest, RandomTreeWithNegativeRadius)
 {
     using point = std::vector<double>;
     using kdtree = spatula::kdtree<point>;
@@ -166,11 +157,10 @@ TEST_CASE("random tree with negative r",
     kdtree index(points.begin(), points.end());
 
     point const p{-2, -3};
-    REQUIRE_THROWS_AS(index.nearest_within(p, -2, 13),
-                      std::invalid_argument);
+    EXPECT_THROW(index.nearest_within(p, -2, 13), std::invalid_argument);
 }
 
-TEST_CASE("incompatible input point", "[kdtree][vector][invalid_argument]")
+TEST(NearestWithinTest, InocmpatiblePoints)
 {
     using point = std::vector<int>;
     using kdtree = spatula::kdtree<point>;
@@ -181,6 +171,5 @@ TEST_CASE("incompatible input point", "[kdtree][vector][invalid_argument]")
     kdtree index(points.begin(), points.end());
 
     point const p{0, 1, 2};
-    REQUIRE_THROWS_AS(index.nearest_within(p, 1, 1),
-                      std::invalid_argument);
+    EXPECT_THROW(index.nearest_within(p, 1, 1), std::invalid_argument);
 }
