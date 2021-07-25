@@ -20,6 +20,7 @@ option(TESTING "Run tests" OFF)
 if (TESTING)
     add_compile_definitions(DEBUG)
     add_subdirectory(test)
+    list(APPEND spatula_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
 endif()
 
 # add docs subdir if specified
