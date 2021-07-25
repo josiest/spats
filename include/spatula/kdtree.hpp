@@ -326,21 +326,6 @@ public:
      * @param end   pointer past the last point.
      *
      * @throw std::invalid_argument if any item has inconsistent dimensions.
-     *
-     * Example:
-     *
-     * @code{.cpp}
-     * // alias the point class we're using
-     * using point = std::vector<int>;
-     *
-     * // define the points to use
-     * std::vector<point> points;
-     * points.push_back(point{0, 0});
-     *
-     * // create the kdtree
-     * namespace sp = spatula;
-     * sp::kdtree<point> index(points.begin(), points.end());
-     * @endcode
      */
     template<class InputIt>
     kdtree(InputIt begin, InputIt end)
@@ -356,25 +341,18 @@ public:
      * Create a kdtree from a vector of points.
      *
      * @param points the points to intialize the kdtree with.
-     *
      * @throw std::invalid_argument if any item has inconsistent dimensions.
-     *
-     * Example:
-     *
-     * @code{.cpp}
-     * // alias the point class we're using
-     * using point = std::vector<int>;
-     *
-     * // define the points to use
-     * std::vector<point> points;
-     * points.push_back(point{0, 0});
-     *
-     * //create the kdtree
-     * namespace sp = spatula;
-     * sp::kdtree index(points);
-     * @endcode
      */
     kdtree(std::vector<point> const & points)
+        : kdtree<point>(points.begin(), points.end()) {}
+
+    /**
+     * Create a kdtree from an initializer list of points.
+     *
+     * @param points the points to initialize the kdtree with.
+     * @throw std::invalid_argument if any item has inconsistent dimensions.
+     */
+    kdtree(std::initializer_list<point> points)
         : kdtree<point>(points.begin(), points.end()) {}
 
     /**
