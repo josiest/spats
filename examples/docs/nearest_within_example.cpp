@@ -6,7 +6,7 @@
 #include <algorithm>
 
 namespace sp = spatula;
-using point = std::vector<int>;
+using point = std::vector<double>;
 
 // define how to print a vector
 namespace std {
@@ -30,7 +30,7 @@ std::vector<point> random_points(size_t N)
     // set up random generator
     static std::random_device rd;
     static std::mt19937 rng{rd()};
-    std::uniform_int_distribution<> dist(-50, 50);
+    std::uniform_real_distribution<> dist(-50, 50);
 
     // create the points
     std::vector<point> points;
@@ -53,16 +53,19 @@ int main()
 
     sp::kdtree index(points);
 
-    // find the single nearest point to p
-    std::cout << "closest to " << p << ": " << index.nearest_to(p) << std::endl;
+    // find the single nearest point to p within 50 units
+    std::cout << "closest to " << p << ": "
+              << index.nearest_within(p, 50.0) << std::endl;
 
-    // find the three nearest points to p
-    std::cout << "3 closest to " << p << ": " << index.nearest_to(p, 3) << std::endl;
+    // find the three nearest points to p within 100 units
+    std::cout << "3 closest to " << p << ": "
+              << index.nearest_within(p, 100.0, 3) << std::endl;
 
-    // find the nearest 20 points to p
-    std::cout << "20 closest to " << p << ": " << index.nearest_to(p, 20) << std::endl;
+    // find the nearest 20 points to p within 0.5 units
+    std::cout << "20 closest to " << p << ": "
+              << index.nearest_within(p, 0.5, 20) << std::endl;
 
-    // find the three nearest points to p using the L1 norm
+    // find the three nearest points to p using the L1 norm within 50 units
     std::cout << "3 L1-closest to " << p << ": "
-              << index.nearest_to(p, 3, sp::L1) << std::endl;
+              << index.nearest_within(p, 50.0, 3, sp::L1) << std::endl;
 }
