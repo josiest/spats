@@ -62,13 +62,7 @@ auto L1(point const & a, point const & b)
     // alias the underlying type for the point
     using num_t = typename std::decay<decltype(a[0])>::type;
 
-    std::vector<size_t> idx(std::size(a));
-    std::iota(idx.begin(), idx.end());
-
     // compute the sum of the absolute values of the difference
-    auto l1 = [&a, &b](num_t dist, size_t i) { return dist + std::abs(a[i]-b[i]); };
-    return std::reduce(idx.begin(), idx.end(), l1);
-
     num_t dist = 0;
     for (size_t i = 0; i < std::size(a); i++) {
         num_t const e = a[i]-b[i];
