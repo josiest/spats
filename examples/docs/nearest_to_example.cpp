@@ -9,6 +9,7 @@ namespace sp = spatula;
 using point = std::vector<int>;
 
 // define how to print a vector
+#ifndef DEBUG
 namespace std {
 template<typename T>
 ostream & operator<<(ostream & os, vector<T> const & v)
@@ -23,6 +24,7 @@ ostream & operator<<(ostream & os, vector<T> const & v)
     return os;
 }
 }
+#endif
 
 // create a random set of points to use for the kdtree
 std::vector<point> random_points(size_t N)

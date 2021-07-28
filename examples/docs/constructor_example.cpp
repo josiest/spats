@@ -8,10 +8,12 @@ namespace sp = spatula;
 using point = std::vector<int>;
 
 // define how to print a vector
+#ifndef DEBUG
+namespace std {
 template<typename T>
-std::ostream & operator<<(std::ostream & os, std::vector<T> const & v)
+ostream & operator<<(ostream & os, vector<T> const & v)
 {
-    std::string sep = "";
+    string sep = "";
     os << "{";
     for (auto const & e : v) {
         os << sep << e;
@@ -20,6 +22,8 @@ std::ostream & operator<<(std::ostream & os, std::vector<T> const & v)
     os << "}";
     return os;
 }
+}
+#endif
 
 int main()
 {
