@@ -182,13 +182,9 @@ private:
     template<typename distance_fn>
 
     auto _nearest_to(point const & p, node * q,
-                    typename std::decay<decltype(p[0])>::type r,
-                    distance_fn distance,
-                    size_t depth, size_t k) const
-
-        -> std::vector<std::pair<
-               point, typename std::decay<decltype(p[0])>::type
-           >>
+                     std::decay_t<decltype(p[0])> r,
+                     distance_fn distance,
+                     size_t depth, size_t k) const
     {
         check_rep();
 #ifdef DEBUG
@@ -203,7 +199,7 @@ private:
         }
 #endif
         // define the match type and how to compare/reduce them
-        using num_t = typename std::decay<decltype(p[0])>::type;
+        using num_t = std::decay_t<decltype(p[0])>;
         using match_t = std::pair<point, num_t>;
         auto cmp_by_distance = [](match_t const & a, match_t const & b) {
             return a.second < b.second;
@@ -384,7 +380,7 @@ public:
         // otherwise call recursive search
 
         // since radius isn't specified for nearest_to, defualt to max possible
-        using num_t = typename std::decay<decltype(p[0])>::type;
+        using num_t = std::decay_t<decltype(p[0])>;
         auto const max_radius = std::numeric_limits<num_t>::max();
 
         auto nearest_matches =
@@ -425,7 +421,7 @@ public:
     template<typename distance_fn = decltype(L2<point>)>
     std::vector<point>
     nearest_within(point const & p,
-                   typename std::decay<decltype(p[0])>::type r, size_t k = 1,
+                   std::decay_t<decltype(p[0])> r, size_t k = 1,
                    distance_fn distance = L2<point>) const
     {
         check_rep();
@@ -445,7 +441,7 @@ public:
         nearest.reserve(nearest_matches.size());
 
         // alias the underlying number type for the point
-        using num_t = typename std::decay<decltype(p[0])>::type;
+        using num_t = std::decay_t<decltype(p[0])>;
         using match_t = std::pair<point, num_t>;
         auto to_point = [](match_t const & match) { return match.first; };
 
