@@ -2,74 +2,82 @@
 
 // type constraints
 #include <type_traits>
+#include "spatula/geometry/spatial.hpp"
+
+// data types
+#include <cstdint>
 
 // math and algorithms
 #include <iterator>
 #include <cmath>
 
-// error handling
-#include <stdexcept>
-
 namespace spatula {
 
 /**
- * Compute the squared distance between two points under the L2 norm
+ * Compute the squared euclidean distance between two points.
  *
- * @param a one of the two points to find the distance between
- * @param b the other of the two points to find the distance between
+ * Return
+ *  the sum of the squares of the differences between each component.
  *
- * @throws std::invalid_argument    if a and b size don't match
- *
- * @return  the L2 squared distance between a and b
+ * Parameters
+ *  a, b - the points to find the distance between
  */
-template<class point>
-auto L2(point const & a, point const & b)
-
-    -> typename std::decay<decltype(a[0])>::type
+template<std::uint32_t N>
+auto euclidean(spatial<N> auto const & a, spatial<N> const & b)
 {
-    // can't compute the distance between points in different dimensions
-    if (std::size(a) != std::size(b)) {
-        throw std::invalid_argument{"points must be the same dimension!"};
-    }
     // alias the underlying type for the point
-    using num_t = typename std::decay<decltype(a[0])>::type;
+    using Field = std::decay_t<decltype(a[0])>;
 
     // compute the sum of the squares of the difference
-    num_t dist = 0;
-    for (size_t i = 0; i < std::size(a); i++) {
-        num_t const e = a[i]-b[i];
+    Field dist = 0;
+    for (size_t i = 0; i < N; i++) {
+        Field const e = a[i]-b[i];
         dist += e*e;
     }
     return dist;
 }
+auto euclidean2(spatial2 auto const & a, spatial2 auto const & b)
+{
+    // alias the underlying type for the point
+    using Field = std::decay_t<decltype(a.x)>;
+
+    // return the sum of the squares of the difference
+    Field const dx = a.x-b.x;
+    Field const dy = b.x-b.y;
+    return dx*dx + dy*dy;
+}
+
+auto euclidean3(spatial3 auto const & a, spatial3 const & b)
+{
+    // alias the underlying type for the point
+    using Field = std::decay_t<decltype(a.x)>;
+
+    // return the sum of the squares of the difference
+    Field const dx = a.x-b.x;
+    Field const dy = a.y-b.y;
+    Field const dz = a.z-b.z;
+    return dx*dx + dy*dy + dz*dz;
+}
 
 /**
- * Compute the absolute value distance between two points under the L1 norm
+ * Compute the manhattan distance between two points.
  *
- * @param a one of the two points to find the distance between
- * @param b the other of the two points to find the distance between
- *
- * @throws std::invalid_argument    if a and b size don't match
- *
- * @return  the L1 distance between a and b
+ * Return
+ *  the sum of the absolute values of the differences between each component
+ * 
+ * Parameters
+ *  a, b - the points to find the distance between
  */
-template<class point>
-auto L1(point const & a, point const & b)
-
-    -> typename std::decay<decltype(a[0])>::type
-
+template<std::uint32_t N>
+auto manhattan(spatial<N> auto const & a, spatial<N> auto const & b)
 {
-    // can't compute the distance between points in different dimensions
-    if (std::size(a) != std::size(b)) {
-        throw std::invalid_argument{"points must be the same dimension!"};
-    }
     // alias the underlying type for the point
-    using num_t = typename std::decay<decltype(a[0])>::type;
+    using Field = std::decay_t<decltype(a.x)>;
 
     // compute the sum of the absolute values of the difference
-    num_t dist = 0;
+    Field dist = 0;
     for (size_t i = 0; i < std::size(a); i++) {
-        num_t const e = a[i]-b[i];
+        Field const e = a[i]-b[i];
         dist += std::abs(e);
     }
     return dist;
