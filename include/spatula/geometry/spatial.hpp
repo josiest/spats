@@ -51,7 +51,9 @@ struct hash<Point> {
     
     size_t operator()(Point const & p) const
     {
-        return p.x ^ (p.y << 1);
+        using Field = std::decay_t<decltype(p.x)>;
+        hash<Field> field_hash;
+        return field_hash(p.x) ^ (field_hash(p.y) << 1);
     }
 };
 }
