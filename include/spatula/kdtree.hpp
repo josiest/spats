@@ -1,22 +1,21 @@
-#ifndef SPATULA_KDTREE_HPP
-#define SPATULA_KDTREE_HPP
+#pragma once
 
-#include "spatula/geometry.hpp"
-
-// templates
+// type constraints
 #include <type_traits>
 
-// resource handlers
+
+// data structures and data types
 #include <vector>
 #include <memory>
 #include <string>
 
-// utilities
+// math and algorithms
 #include <limits>
-#include <stdexcept>
-
-// functional interface/algorithms
+#include "spatula/geometry/norms.hpp"
 #include <algorithm>
+
+// error handling
+#include <stdexcept>
 
 #ifdef DEBUG
 #include <iostream>
@@ -452,5 +451,3 @@ public:
     }
 };
 }
-
-#endif

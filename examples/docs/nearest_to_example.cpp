@@ -1,4 +1,4 @@
-#include "spatula/kdtree.hpp"
+#include <spatula/kdtree.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
