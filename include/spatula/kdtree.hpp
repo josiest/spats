@@ -30,7 +30,7 @@ namespace spatula {
  * The generic point class should implement `std::size` and `operator[]` for as
  * many dimensions as `std::size` returns.
  */
-template<class point>
+template<spatial_type point>
 class kdtree {
 private:
     struct node {
@@ -40,7 +40,7 @@ private:
 
         // create a node from a point vector
         // assumes points is non-empty and no points have been added before
-        node(std::vector<point> points, size_t depth)
+        node(std::vector<point> points, std::uint32_t depth)
         {
 #ifdef DEBUG
             if (points.empty()) {
@@ -48,14 +48,14 @@ private:
             }
 #endif
             // sort points by current axis
-            size_t const axis = depth % std::size(points.back());
+            std::uint32_t const axis = depth % std::size(points.back());
             auto by_axis = [&axis](point const & a, point const & b) {
                 return a[axis] < b[axis];
             };
             std::sort(points.begin(), points.end(), by_axis);
 
             // the current node is the middle of the sorted points
-            size_t const median = points.size()/2;
+            std::uint32_t const median = points.size()/2;
             data = points[median];
 
             // base case one point - left and right are left as null
@@ -129,13 +129,13 @@ private:
 #endif
     }
 
-    void check_rep(node * p, std::vector<point> & seen, size_t depth) const
+    void check_rep(node * p, std::vector<point> & seen, std::uint32_t depth) const
     {
 #ifdef DEBUG
         // check if std::size(p) gives correct dimension
         // and that p[i] gives i^th element of p
         try {
-            for (size_t i = 0; i < std::size(p->data); i++) {
+            for (std::uint32_t i = 0; i < std::size(p->data); i++) {
                 // may cause segfault or throw exception if i doesn't get i^th
                 // element or if std::size gives larger dimension than point
                 p->data[i];
@@ -152,7 +152,7 @@ private:
         }
         seen.push_back(p->data);
 
-        size_t const axis = depth % std::size(p->data);
+        std::uint32_t const axis = depth % std::size(p->data);
         if (p->left) {
             // q[d] <= p[d] only if q is a left child of p
             if (p->left->data[axis] > p->data[axis]) {
@@ -178,12 +178,8 @@ private:
 
     // find the nearest k points to p
     //  assumes q is not null, k is positive, r is either null or positive
-    template<typename distance_fn>
-
-    auto _nearest_to(point const & p, node * q,
-                     std::decay_t<decltype(p[0])> r,
-                     distance_fn distance,
-                     size_t depth, size_t k) const
+    auto _nearest_to(point const & p, node * q, auto r,
+                     std::uint32_t depth, std::uint32_t k) const
     {
         check_rep();
 #ifdef DEBUG
@@ -211,7 +207,7 @@ private:
         std::vector<match_t> nearest;
 
         // compute the current distance
-        match_t current{q->data, distance(p, q->data)};
+        match_t current{q->data, Distance(p, q->data)};
 
         // if r is max value then we don't care about being witihin radius
         //  so default to true
@@ -227,7 +223,7 @@ private:
             point surface = {0};
             surface[0] = r;
 
-            within_radius = current.second < distance(origin, surface);
+            within_radius = current.second < Distance(origin, surface);
         }
 
         // base case: no children - add current to nearest if within radius
@@ -238,7 +234,7 @@ private:
             return nearest;
         }
 
-        size_t const axis = depth % std::size(p);
+        std::uint32_t const axis = depth % std::size(p);
         // go left if current axis in p is at most as in q
         node * preferred = q->left.get();
         node * other = q->right.get();
@@ -250,7 +246,7 @@ private:
         // it may be the case that the preffered branch is null
         // if so just skip it and leave nearest as empty
         if (preferred) {
-            nearest = _nearest_to(p, preferred, r, distance, depth+1, k);
+            nearest = _nearest_to(p, preferred, r, depth+1, k);
         }
         num_t preferred_best = std::numeric_limits<num_t>::max();
         if (!nearest.empty()) {
@@ -275,7 +271,7 @@ private:
         //  or not enough points have ben discovered yet
         if (other && (!axis_too_far || !enough_points)) {
 
-            auto other_nearest = _nearest_to(p, other, r, distance, depth+1, k);
+            auto other_nearest = _nearest_to(p, other, r, depth+1, k);
 
             // merge the two nearest vectors
             nearest.reserve(nearest.size() + other_nearest.size());
@@ -355,7 +351,6 @@ public:
      *
      * @param p         the point to compare to.
      * @param k         the maximum number of points to return.
-     * @param distance  computes the distance between two points.
      *
      * @throw std::invalid_argument if p has a different dimension than the
      *        points in the tree.
@@ -367,9 +362,8 @@ public:
      *
      *  The returned points will be sorted in order of nearest to p.
      */
-    template<typename distance_fn = decltype(L2<point>)>
-    std::vector<point> nearest_to(point const & p, size_t k = 1,
-                                  distance_fn distance = L2<point>) const
+    template<norm_fn Distance>
+    std::vector<point> nearest_to(point const & p, std::uint32_t k = 1) const
     {
         check_rep();
         // base case: k = 0 or root is null - return an empty vector
@@ -383,7 +377,7 @@ public:
         auto const max_radius = std::numeric_limits<num_t>::max();
 
         auto nearest_matches =
-            _nearest_to(p, root.get(), max_radius, distance, 0, k);
+            _nearest_to(p, root.get(), max_radius, 0, k);
 
         // convert match vector to point vector
         std::vector<point> nearest;
@@ -404,10 +398,6 @@ public:
      * @param p         the point to compare to.
      * @param r         the radius to find points within.
      * @param k         the maximum number of points to return.
-     * @param distance  computes the distance between two points.
-     *
-     * @throw std::invalid_argument if r is not positive and if p is not
-     *                              the same dimension as the points in the tree.
      *
      * @return  the k points nearest to p within r radius of p
      *
@@ -417,11 +407,9 @@ public:
      *
      *  The returned points will be sorted in order of nearest to p.
      */
-    template<typename distance_fn = decltype(L2<point>)>
+    template<norm_fn Distance>
     std::vector<point>
-    nearest_within(point const & p,
-                   std::decay_t<decltype(p[0])> r, size_t k = 1,
-                   distance_fn distance = L2<point>) const
+    nearest_within(point const & p, auto r, std::uint32_t k = 1) const
     {
         check_rep();
         // r must be positive
@@ -433,7 +421,7 @@ public:
             return std::vector<point>();
         }
         // otherwise call recursive search
-        auto nearest_matches = _nearest_to(p, root.get(), r, distance, 0, k);
+        auto nearest_matches = _nearest_to(p, root.get(), r, 0, k);
 
         // convert match vector to point vector
         std::vector<point> nearest;
