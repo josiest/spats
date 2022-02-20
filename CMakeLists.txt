@@ -4,36 +4,66 @@ cmake_minimum_required(VERSION 3.12)
 
 project(spatula VERSION 0.1.0)
 
+include(GNUInstallDirs)
+
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED true)
 
-# define the include directories and header files
-set(spatula_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
-list(APPEND spatula_INCLUDE_DIRS ${spatula_INCLUDE_DIR})
-file(GLOB_RECURSE spatula_HEADERS ${spatula_INCLUDE_DIR}/*.hpp)
+# specify file interface
+set(spatula_SRCEXT hpp)
+set(spatula_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# add cmake directory to cmake path so it can use FindSphinx
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-# add test subdir if specified
-option(TESTING "Run tests" OFF)
-if (TESTING)
+# add test sub-directory if specified
+option(run_tests "Run tests" off)
+if (run_tests)
     add_compile_definitions(DEBUG)
     add_subdirectory(test)
-    list(APPEND spatula_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
 endif()
 
-# add docs subdir if specified
-option(DOCS "Build the documentation" OFF)
-if (DOCS)
-    add_subdirectory(docs/doxygen)
-    add_subdirectory(docs/source)
-endif()
-
-# add examples subdir if specified
-option(EXAMPLES "Build examples" OFF)
-if (EXAMPLES)
-    add_subdirectory(examples/docs)
-endif()
+# --- create library ---
 
 add_library(spatula INTERFACE)
+target_include_directories(spatula INTERFACE
+    $<BUILD_INTERFACE:${spatula_SOURCE_DIR}/spatula>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+# -- export library --
+
+# install the target and create the export set
+install(TARGETS spatula
+        EXPORT spatulaTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+# --- create package for library ---
+
+# include helper functions for creating config files
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/spatulaConfigVersion.cmake
+    VERSION ${spatula_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+
+# generate the package configuration file
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/spatulaConfig.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spatula)
+
+# allow exporting from build tree
+export(EXPORT spatulaTargets
+       FILE ${CMAKE_CURRENT_BINARY_DIR}/spatulaTargets.cmake
+       NAMESPACE spatula::)
+
+# install the generated files
+install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/spatulaConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/spatulaConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spatula)
+
+# install the include files
+install(DIRECTORY ${spatula_SOURCE_DIR}/
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING PATTERN "*.${spatula_SRCEXT}")
+
+export(PACKAGE spatula)
