@@ -11,45 +11,45 @@ namespace spatula {
 
 /** A spatial type of 2 dimensions.
  * 
- * A spatial2 type must satisfy the following requirements
+ * A vector2 type must satisfy the following requirements
  * - copy constructible, and constructible from two numeric values
  * - has public numeric members x and y with the same type
  *
  * From these requirements, the following operations have been defined
  * - equality, hashing, addition
  */
-template<class Point>
-concept spatial2 = requires(Point p) {
+template<class Vector>
+concept vector2 = requires(Vector p) {
 
     // -- member requirements --
-    // Point has an x member that's numeric
+    // Vector has an x member that's numeric
     p.x and std::is_arithmetic_v<std::remove_reference_t<decltype(p.x)>>;
-    // Point has a y member with the same type as x
+    // Vector has a y member with the same type as x
     p.y and std::is_same_v<decltype(p.x), decltype(p.y)>;
 
     // -- constructor requirements --
-    // Point is constructable from two numeric values
-    Point(p.x, p.y);
-    std::copy_constructible<Point>;
+    // Vector is constructable from two numeric values
+    Vector(p.x, p.y);
+    std::copy_constructible<Vector>;
 };
 
-template<spatial2 PointA, spatial2 PointB>
-PointA operator+(PointA const & a, PointB const & b)
+template<vector2 VectorA, vector2 VectorB>
+VectorA operator+(VectorA const & a, VectorB const & b)
 {
-    return PointA(a.x+b.x, a.y+b.y);
+    return VectorA(a.x+b.x, a.y+b.y);
 }
 
-bool operator==(spatial2 auto const & lhs, spatial2 auto const & rhs)
+bool operator==(vector2 auto const & lhs, vector2 auto const & rhs)
 {
     return lhs.x == rhs.x and lhs.y == rhs.y;
 }
 }
 
 namespace std {
-template<spatula::spatial2 Point>
-struct hash<Point> {
+template<spatula::vector2 Vector>
+struct hash<Vector> {
     
-    size_t operator()(Point const & p) const
+    size_t operator()(Vector const & p) const
     {
         using Field = std::decay_t<decltype(p.x)>;
         hash<Field> field_hash;
@@ -60,7 +60,7 @@ struct hash<Point> {
 
 namespace spatula {
 
-/** An unordered set of spatial2 objects. */
-template<spatial2 Point>
-using pointset = std::unordered_set<Point>;
+/** An unordered set of vector2 objects. */
+template<vector2 Vector>
+using pointset = std::unordered_set<Vector>;
 }
