@@ -5,7 +5,7 @@ namespace sp = spatula;
 template<sp::vector2 Vector>
 Vector add2(Vector const & v)
 {
-    return v + Vector2(2, 2);
+    return v + Vector(2, 2);
 }
 
 struct point { int x; int y; };

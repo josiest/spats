@@ -11,7 +11,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 # specify file interface
 set(spatula_SRCEXT hpp)
-set(spatula_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # add test sub-directory if specified
 option(run_tests "Run tests" off)
@@ -24,7 +23,7 @@ endif()
 
 add_library(spatula INTERFACE)
 target_include_directories(spatula INTERFACE
-    $<BUILD_INTERFACE:${spatula_SOURCE_DIR}/spatula>
+    $<BUILD_INTERFACE:${spatula_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # -- export library --
@@ -47,13 +46,19 @@ write_basic_package_version_file(
 # generate the package configuration file
 configure_package_config_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/spatulaConfig.cmake
+    spatulaConfig.cmake
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spatula)
 
 # allow exporting from build tree
 export(EXPORT spatulaTargets
        FILE ${CMAKE_CURRENT_BINARY_DIR}/spatulaTargets.cmake
        NAMESPACE spatula::)
+
+# install the exported targets
+install(EXPORT spatulaTargets
+        FILE spatulaTargets.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spatula
+        NAMESPACE spatula::)
 
 # install the generated files
 install(FILES
@@ -62,7 +67,7 @@ install(FILES
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spatula)
 
 # install the include files
-install(DIRECTORY ${spatula_SOURCE_DIR}/
+install(DIRECTORY include/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.${spatula_SRCEXT}")
 
