@@ -10,14 +10,14 @@ you to use operations like addition on arbitrary
 #include <spatula/geometry.hpp>
 namespace sp = spatula;
 
-template<sp::spatial2 Point>
-Point add2(Point const & p)
+template<sp::vector2 Vector>
+Vector add2(Vector const & v)
 {
-    // addition has been defined for spatial2 types
-    return p + Point(2, 2);
+    // addition has been defined for vector2 types
+    return v + Vector(2, 2);
 }
 
-// since the point type satisfies the spatial2 requirements,
+// since the point type satisfies the vector2 requirements,
 // we can give it to a function that uses the addition operator
 // even though we didn't explicitly define addition for the point type
 struct point { int x; int y; };
@@ -30,4 +30,4 @@ int main()
 
 ## Requirements
 
-- compiler for C++20 or newer
+- compiler for C++20 or later
