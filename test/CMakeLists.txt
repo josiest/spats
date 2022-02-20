@@ -1,15 +1,21 @@
+find_package(Catch2 REQUIRED)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+file(GLOB geometry_test_sources *.cpp)
+add_executable(geometery_test geometry/${geometry_test_sources})
 
-find_package(Boost REQUIRED)
+list(APPEND all_tests geometry_test)
+foreach(test ${all_tests})
+    targt_link_libraries(${test} Catch2::Catch2 Catch2::Catch2WithMain)
+endforeach()
 
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-add_executable(test ${SOURCES})
 
-target_link_libraries(test PRIVATE ${CONAN_LIBS})
-target_include_directories(test PRIVATE
-    ${CONAN_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
-    ${spatula_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# file(GLOB example_sources *.cpp)
+# foreach(example_source ${example_sources})
+# 
+#     # get the file name without its extension
+#     get_filename_component(example_name ${example_source} NAME_WE)
+# 
+#     # add the executables
+#     add_executable(${example_name} ${example_source})
+# 
+# endforeach(example_source ${EXAMPES})
