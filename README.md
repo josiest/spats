@@ -50,13 +50,13 @@ shell instead of running the last command.
 
 ## Overview
 
-- [geometry/vectors](geometryvectorshpp)
-    - [`concept basic_vector2`](concept-basic_vector2)
-    - [`concept vector2`](concept_vector2)
-- [geometry/directions](geometrydirectionshpp)
-    - [`concept ranged_enum`](concept-ranged_enum)
-    - [`enum cardinal::direction_name`](enum-cardinaldirection_name)
-    - [`cardinal::direction_as(dir)`](cardinaldirection_asdir)`
+- [geometry/vectors](#geometryvectorshpp)
+    - [`concept basic_vector2`](#concept-basic_vector2)
+    - [`concept vector2`](#concept_vector2)
+- [geometry/directions](#geometrydirectionshpp)
+    - [`concept ranged_enum`](#concept-ranged_enum)
+    - [`enum cardinal::direction_name`](#enum-cardinaldirection_name)
+    - [`cardinal::direction_as(dir)`](#cardinaldirection_asdir)`
 
 # geometry/vectors.hpp
 
