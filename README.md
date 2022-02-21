@@ -48,7 +48,17 @@ shell instead of running the last command.
 
 # Documentation
 
-# spatula/geometry/vectors.hpp
+## Overview
+
+- [geometry/vectors](geometryvectorshpp)
+    - [`concept basic_vector2`](concept-basic_vector2)
+    - [`concept vector2`](concept_vector2)
+- [geometry/directions](geometrydirectionshpp)
+    - [`concept ranged_enum`](concept-ranged_enum)
+    - [`enum cardinal::direction_name`](enum-cardinaldirection_name)
+    - [`cardinal::direction_as(dir)`](cardinaldirection_asdir)`
+
+# geometry/vectors.hpp
 
 ## concept basic_vector2
 A basic POD spatial type of 2 dimensions.
@@ -122,7 +132,7 @@ glm::ivec2 const p(1, 2);
 glm::ivec2 const q = add2(p); // (3, 4)
 ```
 
-# spatula/geometry/directions.hpp
+# geometry/directions.hpp
 
 ## concept ranged_enum
 An enum with sequential values defined from [0, Enum::size).
