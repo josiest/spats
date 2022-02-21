@@ -1,8 +1,8 @@
 # spatula
 
-A simple header-only library for algorithms and datastructures for spatial data
+A simple header-only library for manipulating spatial data of arbitrary types.
 
-## Example Usage
+# Example Usage
 
 One of the useful features of spatula are the spatial data concepts. These allow
 you to use operations like addition on arbitrary 
@@ -28,11 +28,13 @@ int main()
 }
 ```
 
+# Installation
+
 ## Requirements
 
 - compiler for C++20 or later
 
-## Installation
+## Installation Instructions
 
 ```sh
 mkdir build
@@ -43,3 +45,57 @@ sudo cmake --install .
 
 If you're on windows, you can run `cmake --install .` on an adminstrator
 shell instead of running the last command.
+
+# Documentation
+
+# spatula/geometry/vectors.hpp
+
+## template\<class Vector\> concept basic_vector2;
+A basic POD spatial type of 2 dimensions.
+
+### Requirements
+- default and copy constructible, and constructible from two numeric values
+- has public numeric members x and y with the same type
+
+### Examples
+
+```cpp
+#include <spatula/geometry.hpp>
+#include <SDL.h>
+
+template<sp::basic_vector2 Vector>
+Vector add2(Vector const & p)
+{
+    return Vector(p.x + 2, p.y + 2);
+}
+
+// ...
+
+SDL_Point const p(1, 2);
+SDL_Point const q = add2(p); // (3, 4)
+```
+
+## template\<class Vector\> concept vector2;
+A vector type of 2 dimensions.
+
+### Requirements
+- basic_vector2 requirements
+- equality comparable
+- closed under addition
+
+### Examples
+
+```cpp
+#include <spatula/geometry.hpp>
+#include <glm/glm.hpp>
+
+template<sp::vector2 Vector>
+Vector add2(Vector const & p)
+{
+    return p + Vector(2, 2);
+}
+
+// ...
+glm::ivec2 const p(1, 2);
+glm::ivec2 const q = add2(p);
+```
