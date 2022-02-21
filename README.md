@@ -96,6 +96,7 @@ Vector add2(Vector const & p)
 }
 
 // ...
+
 glm::ivec2 const p(1, 2);
-glm::ivec2 const q = add2(p);
+glm::ivec2 const q = add2(p); // (3, 4)
 ```
