@@ -7,19 +7,20 @@
 #include <type_traits>
 #include <concepts>
 
-namespace spatula {
+namespace sp {
 
-/** A spatial type of 2 dimensions.
- * 
- * A vector2 type must satisfy the following requirements
- * - copy constructible, and constructible from two numeric values
- * - has public numeric members x and y with the same type
+/** A basic POD spatial type of 2 dimensions.
  *
- * From these requirements, the following operations have been defined
- * - equality, hashing, addition
+ * A vector2 type must satisfy the following requirements
+ * - default and copy constructible, and constructible from two numeric values
+ * - has public numeric members x and y with the same type
+ * 
+ * Useful for working with c-types that haven't defined vector operations.
  */
 template<class Vector>
-concept vector2 = requires(Vector p) {
+concept basic_vector2 = std::default_initializable<Vector> and
+                        std::copy_constructible<Vector> and
+                        requires(Vector p) {
 
     // -- member requirements --
     // Vector has an x member that's numeric
@@ -30,37 +31,34 @@ concept vector2 = requires(Vector p) {
     // -- constructor requirements --
     // Vector is constructable from two numeric values
     Vector(p.x, p.y);
-    std::copy_constructible<Vector>;
 };
 
-template<vector2 VectorA, vector2 VectorB>
-VectorA operator+(VectorA const & a, VectorB const & b)
+/** Addition for basic vector2 types. */
+template<basic_vector2 Vector>
+Vector vector2_add(Vector const & u, Vector const & v)
 {
-    return VectorA(a.x+b.x, a.y+b.y);
+    return Vector(u.x + v.x, u.y + v.y);
 }
 
-bool operator==(vector2 auto const & lhs, vector2 auto const & rhs)
+/** Equality for basic vector2 types. */
+template<basic_vector2 Vector>
+bool vector2_equals(Vector const & u, Vector const & v)
 {
-    return lhs.x == rhs.x and lhs.y == rhs.y;
-}
+    return u.x == v.x and u.y == v.y;
 }
 
-namespace std {
-template<spatula::vector2 Vector>
-struct hash<Vector> {
-    
-    size_t operator()(Vector const & p) const
-    {
-        using Field = std::decay_t<decltype(p.x)>;
-        hash<Field> field_hash;
-        return field_hash(p.x) ^ (field_hash(p.y) << 1);
-    }
+/** A vector type of 2 dimensions.
+ * 
+ * A vector2 type must satisfy the following requirements
+ * - basic_vector2 requirements
+ * - equality comparable
+ * - closed under addition
+ */
+template<class Vector>
+concept vector2 = basic_vector2<Vector> and
+                  std::equality_comparable<Vector> and
+                  requires(Vector p) {
+    // vectors must be closed under additon
+    { p + p } -> std::same_as<Vector>;
 };
-}
-
-namespace spatula {
-
-/** An unordered set of vector2 objects. */
-template<vector2 Vector>
-using pointset = std::unordered_set<Vector>;
 }
