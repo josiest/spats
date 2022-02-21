@@ -31,3 +31,15 @@ int main()
 ## Requirements
 
 - compiler for C++20 or later
+
+## Installation
+
+```sh
+mkdir build
+cd build
+cmake ..
+sudo cmake --install .
+```
+
+If you're on windows, you can run `cmake --install .` on an adminstrator
+shell instead of running the last command.
