@@ -50,12 +50,25 @@ shell instead of running the last command.
 
 # spatula/geometry/vectors.hpp
 
-## template\<class Vector\> concept basic_vector2;
+## concept basic_vector2
 A basic POD spatial type of 2 dimensions.
 
 ### Requirements
 - default and copy constructible, and constructible from two numeric values
 - has public numeric members x and y with the same type
+
+### Signature
+```cpp
+template<class Vector>
+concept basic_vector2 = std::default_initializable<Vector> and
+                        std::copy_constructible<Vector> and
+                        requires(Vector p) {
+
+    p.x and std::is_arithmetic_v<std::remove_reference_t<decltype(p.x)>>;
+    p.y and std::is_same_v<decltype(p.x), decltype(p.y)>;
+    Vector(p.x, p.y);
+};
+```
 
 ### Examples
 
@@ -75,13 +88,21 @@ SDL_Point const p(1, 2);
 SDL_Point const q = add2(p); // (3, 4)
 ```
 
-## template\<class Vector\> concept vector2;
+## concept vector2
 A vector type of 2 dimensions.
 
 ### Requirements
 - basic_vector2 requirements
 - equality comparable
 - closed under addition
+
+### Signature
+```cpp
+template<class Vector>
+concept vector2 = basic_vector2<Vector> and
+                  std::equality_comparable<Vector> and
+                  requires(Vector p) { { p + p } -> std::same_as<Vector>; };
+```
 
 ### Examples
 
@@ -99,4 +120,54 @@ Vector add2(Vector const & p)
 
 glm::ivec2 const p(1, 2);
 glm::ivec2 const q = add2(p); // (3, 4)
+```
+
+# spatula/geometry/directions.hpp
+
+## concept ranged_enum
+An enum with sequential values defined from [0, Enum::size).
+
+### Signature
+```cpp
+template<class Enum>
+concept ranged_enum = std::is_enum_v<Enum> and requires { Enum::size; };
+```
+
+### Requirements
+- must be an enum type
+- must have a `size` value
+
+## enum cardinal::direction_name
+The cardinal directions
+
+### Members
+- `cardinal::north`
+- `cardinal::east`
+- `cardinal::south`
+- `cardinal::west`
+- `cardinal::size`
+
+## cardinal::direction_as(dir)
+The vector associated with a cardinal direction
+
+### Signature
+```cpp
+template<basic_vector2 Vector>
+Vector const &
+direction_as(cardinal::direction_name dir);
+```
+
+### Return
+A unit-vector representing the input direction
+
+### Parameters
+dir - the direction to represent
+
+### Notes
+Behavior is undefined when `dir == cardinal::direction_name::size`
+
+### Examples
+```cpp
+using namespace sp::cardinal;
+auto const & north = direction_as<SDL_Point>(direction_name::north);
 ```

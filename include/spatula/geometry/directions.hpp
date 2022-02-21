@@ -15,7 +15,7 @@
 namespace sp {
 
 /** An enum with sequential values defined from [0, Enum::size). */
-template<typename Enum>
+template<class Enum>
 concept ranged_enum = std::is_enum_v<Enum> and requires { Enum::size; };
 
 }
@@ -25,7 +25,7 @@ namespace sp::cardinal {
 /** The cardinal directions. */
 enum direction_name { north, east, south, west, size };
 
-/** Get the vector associated with a cardinal direction. */
+/** The vector associated with a cardinal direction. */
 template<vector2 Vector>
 Vector const &
 direction_as(direction_name dir)
