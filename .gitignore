@@ -71,71 +71,11 @@ tags
 # --- Project ---
 build
 
-# --- Doxygen ---
+# --- VScode ---
+.vscode/*
 
-*~
-.*sw?
-\#*
-.DS_Store
+# Local History for Visual Studio Code
+.history/
 
-*.rej
-*.orig
-
-*.pro
-/packages/rpm/doxygen.spec
-*.idb
-*.pdb
-
-/doxygen_docs
-/doxygen.tag
-/build*
-/qtools_docs
-/warnings.log
-
-tags
-
-.idea
-
-# --- Sphinx ---
-
-# sphinx build folder
-_build
-
-# Compiled source #
-###################
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.so
-
-# Packages #
-############
-# it's better to unpack these files and commit the raw source
-# git has its own built in compression methods
-*.7z
-*.dmg
-*.gz
-*.iso
-*.jar
-*.rar
-*.tar
-*.zip
-
-# Logs and databases #
-######################
-*.log
-*.sql
-*.sqlite
-
-# OS generated files #
-######################
-.DS_Store?
-ehthumbs.db
-Icon?
-Thumbs.db
-
-# Editor backup files #
-#######################
-*~
+# Built Visual Studio Code Extensions
+*.vsix
