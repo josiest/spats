@@ -22,6 +22,8 @@ endif()
 # --- create library ---
 
 add_library(spatula INTERFACE)
+add_library(sp::geometry ALIAS spatula)
+
 target_include_directories(spatula INTERFACE
     $<BUILD_INTERFACE:${spatula_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
@@ -52,13 +54,13 @@ configure_package_config_file(
 # allow exporting from build tree
 export(EXPORT spatulaTargets
        FILE ${CMAKE_CURRENT_BINARY_DIR}/spatulaTargets.cmake
-       NAMESPACE spatula::)
+       NAMESPACE sp::)
 
 # install the exported targets
 install(EXPORT spatulaTargets
         FILE spatulaTargets.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/spatula
-        NAMESPACE spatula::)
+        NAMESPACE sp::)
 
 # install the generated files
 install(FILES
