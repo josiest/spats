@@ -13,9 +13,6 @@ project(spatula
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
-
 #
 # Define the library
 #
@@ -32,6 +29,9 @@ endif()
 
 add_library(spatula INTERFACE)
 add_library(sp::spatula ALIAS spatula)
+set_target_properties(spatula PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED true)   
 
 #
 # Export the library package
