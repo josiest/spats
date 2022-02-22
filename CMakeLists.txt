@@ -22,7 +22,7 @@ endif()
 # --- create library ---
 
 add_library(spatula INTERFACE)
-add_library(sp::geometry ALIAS spatula)
+add_library(sp::spatula ALIAS spatula)
 
 target_include_directories(spatula INTERFACE
     $<BUILD_INTERFACE:${spatula_SOURCE_DIR}/include>
