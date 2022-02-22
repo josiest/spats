@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.18)
 #
 
 project(spatula
-	VERSION 0.1.0
+	VERSION 1.0.0
 	DESCRIPTION "Spatial manipulation with modern C++"
 	HOMEPAGE_URL "https://github.com/josiest/spatula"
 	LANGUAGES CXX)
