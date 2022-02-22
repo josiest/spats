@@ -1,31 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
 
 #
-# Define the project
-#
-
-project(spatula
-	VERSION 1.0.0
-	DESCRIPTION "Spatial manipulation with modern C++"
-	HOMEPAGE_URL "https://github.com/josiest/spatula"
-	LANGUAGES CXX)
-
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
-
-#
 # Define the library
 #
 
-# specify file interface
-set(spatula_SRCEXT hpp)
-
-# add test sub-directory if specified
-option(run_tests "Run tests" off)
-if (run_tests)
-    add_compile_definitions(DEBUG)
-    add_subdirectory(test)
-endif()
+project(spatula VERSION 1.0.0
+	    DESCRIPTION "Spatial manipulation with modern C++"
+	    HOMEPAGE_URL "https://github.com/josiest/spatula"
+	    LANGUAGES CXX)
 
 add_library(spatula INTERFACE)
 add_library(sp::spatula ALIAS spatula)
@@ -36,6 +18,9 @@ set_target_properties(spatula PROPERTIES
 #
 # Export the library package
 #
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
 # define the include directory for the library
 target_include_directories(spatula INTERFACE
@@ -78,6 +63,6 @@ install(FILES
 # install the include files
 install(DIRECTORY include/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FILES_MATCHING PATTERN "*.${spatula_SRCEXT}")
+        FILES_MATCHING PATTERN "*.hpp")
 
 export(PACKAGE spatula)
