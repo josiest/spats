@@ -1,13 +1,17 @@
 #pragma once
 
-// data structures
-#include <unordered_set>
-
 // type constraints
 #include <type_traits>
 #include <concepts>
+#include <ranges>
+
+// data structures and algorithms
+#include <algorithm>
+#include <utility>
 
 namespace sp {
+
+namespace ranges = std::ranges;
 
 /** A basic POD spatial type of 2 dimensions.
  *
@@ -26,7 +30,7 @@ concept basic_vector2 = std::default_initializable<Vector> and
     // Vector has an x member that's numeric
     p.x and std::is_arithmetic_v<std::remove_reference_t<decltype(p.x)>>;
     // Vector has a y member with the same type as x
-    p.y and std::is_same_v<decltype(p.x), decltype(p.y)>;
+    p.y and std::same_as<decltype(p.x), decltype(p.y)>;
 
     // -- constructor requirements --
     // Vector is constructable from two numeric values
@@ -45,6 +49,42 @@ template<basic_vector2 Vector>
 bool vector2_equals(Vector const & u, Vector const & v)
 {
     return u.x == v.x and u.y == v.y;
+}
+
+/** Order vectors by their x-field. */
+template<basic_vector2 Vector>
+bool comparing_x2(Vector const & u, Vector const & v)
+{
+    return u.x < v.x;
+}
+
+/** Order vectors by their y-field. */
+template<basic_vector2 Vector>
+bool comparing_y2(Vector const & u, Vector const & v)
+{
+    return u.y < v.y;
+}
+
+/** Generate the bounding corners of a set of vectors.
+ * 
+ * Return
+ *   A pair of vectors (lower-left, upper-right), representing the bounding
+ *   corners of the input points.
+ * 
+ * Parameters
+ *   points - the input points to find the boundary of
+ */
+template<ranges::input_range Range>
+    requires basic_vector2<ranges::range_value_t<Range>>
+auto bounding_corners2(Range && points)
+{
+    using Vector = ranges::range_value_t<Range>;
+
+    // find the points with the least and greatest x and y coordinates
+    auto const &[xmin, xmax] = ranges::minmax(points, comparing_x2);
+    auto const &[ymin, ymax] = ranges::minmax(points, comparing_y2);
+
+    return std::make_pair(Vector(xmin.x, ymin.y), Vector(xmax.x, ymax.y));
 }
 
 /** A vector type of 2 dimensions.

@@ -2,15 +2,19 @@
 
 // type constraints
 #include <type_traits>
-
-// data structures and data types
 #include "spatula/geometry/vectors.hpp"
-#include <array>
+
+// data types and data structures
 #include <cstdint>
 #include <cstddef>
+#include <array>
 
-// math
-#include <random>
+namespace sp::direction {
+
+/** The cardinal directions. */
+enum cardinal { north, east, south, west, size };
+
+}
 
 namespace sp {
 
@@ -18,23 +22,22 @@ namespace sp {
 template<class Enum>
 concept ranged_enum = std::is_enum_v<Enum> and requires { Enum::size; };
 
-}
-
-namespace sp::cardinal {
-
-/** The cardinal directions. */
-enum direction_name { north, east, south, west, size };
-
-/** The vector associated with a cardinal direction. */
-template<vector2 Vector>
-Vector const &
-direction_as(direction_name dir)
-{
-    static std::array<Vector, direction_name::size> directions{
-        /* north */ Vector(0, 1), /* east */ Vector(1, 0),
-        /* south */ Vector(0, -1), /* west */ Vector(-1, 0)
-    };
-    return directions[dir];
+/** Convert a ranged_enum to a unit-vector. */
+template<ranged_enum Enum, vector2 Vector>
+struct direction_as {
+    Vector operator()(Enum direction) const;
 };
 
+template<vector2 Vector>
+struct direction_as<direction::cardinal, Vector>{
+    Vector operator()(direction::cardinal dir) const
+    {
+        static std::array<Vector, direction::cardinal::size> directions{
+            /* north */ Vector(0, 1), /* east */ Vector(1, 0),
+            /* south */ Vector(0, -1), /* west */ Vector(-1, 0)
+        };
+        return directions[dir];
+
+    }
+};
 }
