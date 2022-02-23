@@ -193,7 +193,9 @@ Convert a direction as `ranged_enum` to a unit-vector
 ### Signature
 ```cpp
 template<basic_vector2 Vector, ranged_enum Direction>
-Vector const & direction_as(Direction dir);
+struct direction_as{
+    Vector operator()(Direction dir);
+};
 ```
 
 ### Return
