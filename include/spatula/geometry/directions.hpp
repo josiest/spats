@@ -9,12 +9,8 @@
 #include <cstddef>
 #include <array>
 
-namespace sp::direction {
-
 /** The cardinal directions. */
-enum cardinal { north, east, south, west, size };
-
-}
+namespace sp::cardinal { enum direcion_name { north, east, south, west, size }; }
 
 namespace sp {
 

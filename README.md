@@ -53,10 +53,12 @@ shell instead of running the last command.
 - [geometry/vectors](#geometryvectorshpp)
     - [`concept basic_vector2`](#concept-basic_vector2)
     - [`concept vector2`](#concept_vector2)
+    - [`bounding_corners2(points)`](#bounding_corners2points)
+    - [comparing vectors](#comparing-vectors)
 - [geometry/directions](#geometrydirectionshpp)
     - [`concept ranged_enum`](#concept-ranged_enum)
     - [`enum cardinal::direction_name`](#enum-cardinaldirection_name)
-    - [`cardinal::direction_as(dir)`](#cardinaldirection_asdir)`
+    - [`direction_as(dir)`](#direction_asdir)`
 
 # geometry/vectors.hpp
 
@@ -130,6 +132,34 @@ Vector add2(Vector const & p)
 
 glm::ivec2 const p(1, 2);
 glm::ivec2 const q = add2(p); // (3, 4)
+```
+
+## bounding_corners2(points)
+
+### Signature
+```cpp
+template<ranges::input_range Range>
+    requires basic_vector2<ranges::range_value_t<Range>>
+auto bounding_corners2(Range && points);
+```
+
+### Return
+A pair of vectors (lower-left, upper-right), representing the bounding corners
+of the input points.
+
+### Parameters
+- `points` the input points to find the boundary of
+
+## comparing vectors
+Compare vectors by their components.
+
+```cpp
+// compare u < v by their x-components
+template<basic_vector2 Vector>
+bool comparing_x2(Vector const & u, Vector const & v);
+// comapre u < v by their y components
+template<basic_vector2 Vector>
+bool comparing_y2(Vector const & u, Vector const & v);
 ```
 
 # geometry/directions.hpp

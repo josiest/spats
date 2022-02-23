@@ -51,14 +51,12 @@ bool vector2_equals(Vector const & u, Vector const & v)
     return u.x == v.x and u.y == v.y;
 }
 
-/** Order vectors by their x-field. */
+/** Order vectors by their fields. */
 template<basic_vector2 Vector>
 bool comparing_x2(Vector const & u, Vector const & v)
 {
     return u.x < v.x;
 }
-
-/** Order vectors by their y-field. */
 template<basic_vector2 Vector>
 bool comparing_y2(Vector const & u, Vector const & v)
 {
