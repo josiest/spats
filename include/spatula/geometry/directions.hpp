@@ -10,7 +10,7 @@
 #include <array>
 
 /** The cardinal directions. */
-namespace sp::cardinal { enum direcion_name { north, east, south, west, size }; }
+namespace sp::cardinal { enum direction_name { north, east, south, west, size }; }
 
 namespace sp {
 
@@ -19,16 +19,16 @@ template<class Enum>
 concept ranged_enum = std::is_enum_v<Enum> and requires { Enum::size; };
 
 /** Convert a ranged_enum to a unit-vector. */
-template<ranged_enum Enum, vector2 Vector>
+template<vector2 Vector, ranged_enum Enum>
 struct direction_as {
     Vector operator()(Enum direction) const;
 };
 
 template<vector2 Vector>
-struct direction_as<direction::cardinal, Vector>{
-    Vector operator()(direction::cardinal dir) const
+struct direction_as<Vector, cardinal::direction_name>{
+    Vector operator()(cardinal::direction_name dir) const
     {
-        static std::array<Vector, direction::cardinal::size> directions{
+        static std::array<Vector, cardinal::direction_name::size> directions{
             /* north */ Vector(0, 1), /* east */ Vector(1, 0),
             /* south */ Vector(0, -1), /* west */ Vector(-1, 0)
         };

@@ -187,14 +187,13 @@ The cardinal directions
 - `cardinal::west`
 - `cardinal::size`
 
-## cardinal::direction_as(dir)
-The vector associated with a cardinal direction
+## direction_as(dir)
+Convert a direction as `ranged_enum` to a unit-vector
 
 ### Signature
 ```cpp
-template<basic_vector2 Vector>
-Vector const &
-direction_as(cardinal::direction_name dir);
+template<basic_vector2 Vector, ranged_enum Direction>
+Vector const & direction_as(Direction dir);
 ```
 
 ### Return
@@ -203,11 +202,9 @@ A unit-vector representing the input direction
 ### Parameters
 dir - the direction to represent
 
-### Notes
-Behavior is undefined when `dir == cardinal::direction_name::size`
-
 ### Examples
 ```cpp
-using namespace sp::cardinal;
-auto const & north = direction_as<SDL_Point>(direction_name::north);
+namespace cardinal = sp::cardinal;
+sp::direction_as<SDL_Point, cardinal::direction_name> to_vector;
+auto const & north = to_vector(cardinal::north);
 ```
