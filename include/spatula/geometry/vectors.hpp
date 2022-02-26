@@ -29,43 +29,52 @@ concept with_y_component = requires(Vector v) {
     v.y and std::is_arithmetic_v<std::remove_reference_t<decltype(v.y)>>;
 };
 
-/** A basic POD spatial type of 2 dimensions.
+//
+// Numeric Types
+//
+
+/** A data type with two numeric dimensions.
  *
- * A vector2 type must satisfy the following requirements
- * - default and copy constructible, and constructible from two numeric values
- * - has public numeric members x and y with the same type
+ * Requirements
+ *  - constructible from two numeric values
+ *  - has x and y components of the same type
+ */
+template<class Vector>
+concept numeric2d =
+    with_x_component<Vector> and with_y_component<Vector> and
+requires(Vector v) {
+    std::same_as<decltype(v.x), decltype(v.y)>;
+    Vector(v.x, v.y);
+};
+
+//
+// Vector types
+//
+
+/** A basic "plain old" vector.
+ *
+ * Requirements
+ * - semiregular and numeric
  * 
  * Useful for working with c-types that haven't defined vector operations.
  */
 template<class Vector>
-concept basic_vector2 = std::default_initializable<Vector> and
-                        std::copy_constructible<Vector> and
-                        requires(Vector p) {
+concept semi_vector2 = std::semiregular<Vector> and numeric2d<Vector>;
 
-    // -- member requirements --
-    // Vector has an x member that's numeric
-    p.x and std::is_arithmetic_v<std::remove_reference_t<decltype(p.x)>>;
-    // Vector has a y member with the same type as x
-    p.y and std::same_as<decltype(p.x), decltype(p.y)>;
-
-    // -- constructor requirements --
-    // Vector is constructable from two numeric values
-    Vector(p.x, p.y);
+/** A complete vector type.
+ * 
+ * Requirements
+ * - regular and numeric
+ * - closed under addition, subtraction and multiplication
+ */
+template<class Vector>
+concept vector2 =
+    std::regular<Vector> and numeric2d<Vector> and
+requires(Vector p) {
+    { p + p } -> std::same_as<Vector>;
+    { p - p } -> std::same_as<Vector>;
+    { p.x * p } -> std::same_as<Vector>;
 };
-
-/** Addition for basic vector2 types. */
-template<basic_vector2 Vector>
-Vector vector2_add(Vector const & u, Vector const & v)
-{
-    return Vector(u.x + v.x, u.y + v.y);
-}
-
-/** Equality for basic vector2 types. */
-template<basic_vector2 Vector>
-bool vector2_equals(Vector const & u, Vector const & v)
-{
-    return u.x == v.x and u.y == v.y;
-}
 
 //
 // Ordering
@@ -83,6 +92,10 @@ bool least_y(Vector const & u, Vector const & v)
     return u.y < v.y;
 }
 
+//
+// Utilities
+//
+
 /** Generate the bounding corners of a set of vectors.
  * 
  * Return
@@ -93,7 +106,7 @@ bool least_y(Vector const & u, Vector const & v)
  *   points - the input points to find the boundary of
  */
 template<ranges::input_range Range>
-    requires basic_vector2<ranges::range_value_t<Range>>
+    requires semi_vector2<ranges::range_value_t<Range>>
 auto bounding_corners2d(Range && points)
 {
     using Vector = ranges::range_value_t<Range>;
@@ -105,18 +118,4 @@ auto bounding_corners2d(Range && points)
     return std::make_pair(Vector(xmin.x, ymin.y), Vector(xmax.x, ymax.y));
 }
 
-/** A vector type of 2 dimensions.
- * 
- * A vector2 type must satisfy the following requirements
- * - basic_vector2 requirements
- * - equality comparable
- * - closed under addition
- */
-template<class Vector>
-concept vector2 = basic_vector2<Vector> and
-                  std::equality_comparable<Vector> and
-                  requires(Vector p) {
-    // vectors must be closed under additon
-    { p + p } -> std::same_as<Vector>;
-};
 }
