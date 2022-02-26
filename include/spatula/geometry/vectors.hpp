@@ -13,6 +13,22 @@ namespace sp {
 
 namespace ranges = std::ranges;
 
+//
+// Components
+//
+
+/** A data type with a numeric x member. */
+template<class Vector>
+concept with_x_component = requires(Vector v) {
+    v.x and std::is_arithmetic_v<std::remove_reference_t<decltype(v.x)>>;
+};
+
+/** A data type with a numeric y member. */
+template<class Vector>
+concept with_y_component = requires(Vector v) {
+    v.y and std::is_arithmetic_v<std::remove_reference_t<decltype(v.y)>>;
+};
+
 /** A basic POD spatial type of 2 dimensions.
  *
  * A vector2 type must satisfy the following requirements
@@ -51,14 +67,18 @@ bool vector2_equals(Vector const & u, Vector const & v)
     return u.x == v.x and u.y == v.y;
 }
 
+//
+// Ordering
+//
+
 /** Order vectors by their fields. */
-template<basic_vector2 Vector>
-bool comparing_x2(Vector const & u, Vector const & v)
+template<with_x_component Vector>
+bool least_x(Vector const & u, Vector const & v)
 {
     return u.x < v.x;
 }
-template<basic_vector2 Vector>
-bool comparing_y2(Vector const & u, Vector const & v)
+template<with_y_component Vector>
+bool least_y(Vector const & u, Vector const & v)
 {
     return u.y < v.y;
 }
@@ -74,13 +94,13 @@ bool comparing_y2(Vector const & u, Vector const & v)
  */
 template<ranges::input_range Range>
     requires basic_vector2<ranges::range_value_t<Range>>
-auto bounding_corners2(Range && points)
+auto bounding_corners2d(Range && points)
 {
     using Vector = ranges::range_value_t<Range>;
 
     // find the points with the least and greatest x and y coordinates
-    auto const &[xmin, xmax] = ranges::minmax(points, comparing_x2);
-    auto const &[ymin, ymax] = ranges::minmax(points, comparing_y2);
+    auto const &[xmin, xmax] = ranges::minmax(points, least_x);
+    auto const &[ymin, ymax] = ranges::minmax(points, least_y);
 
     return std::make_pair(Vector(xmin.x, ymin.y), Vector(xmax.x, ymax.y));
 }
