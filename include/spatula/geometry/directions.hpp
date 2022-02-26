@@ -19,12 +19,12 @@ template<class Enum>
 concept ranged_enum = std::is_enum_v<Enum> and requires { Enum::size; };
 
 /** Convert a ranged_enum to a unit-vector. */
-template<vector2 Vector, ranged_enum Enum>
+template<numeric Vector, ranged_enum Enum>
 struct direction_as {
     Vector operator()(Enum direction) const;
 };
 
-template<vector2 Vector>
+template<numeric2d Vector>
 struct direction_as<Vector, cardinal::direction_name>{
     Vector operator()(cardinal::direction_name dir) const
     {

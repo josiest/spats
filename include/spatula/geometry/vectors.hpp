@@ -29,6 +29,13 @@ concept with_y_component = requires(Vector v) {
     v.y and std::is_arithmetic_v<std::remove_reference_t<decltype(v.y)>>;
 };
 
+/** A data type with a numeric z member. */
+template<class Vector>
+concept with_z_component = requires(Vector v) {
+    // Vector has a y member that's numeric
+    v.z and std::is_arithmetic_v<std::remove_reference_t<decltype(v.z)>>;
+};
+
 //
 // Numeric Types
 //
@@ -47,6 +54,30 @@ requires(Vector v) {
     Vector(v.x, v.y);
 };
 
+/** A data type with three numeric dimensions.
+ *
+ * Requirements
+ *  - constructible from two numeric values
+ *  - has x, y, and z components of the same type
+ */
+template<class Vector>
+concept numeric3d =
+    with_x_component<Vector> and with_y_component<Vector> and
+    with_z_component<Vector> and
+requires(Vector v) {
+    std::same_as<decltype(v.x), decltype(v.y)>;
+    std::same_as<decltype(v.x), decltype(v.z)>;
+    Vector(v.x, v.y, v.z);
+};
+
+/** A general numeric type.
+ * 
+ * Requirements
+ *  - numeric2d or numeric3d
+ */
+template<class Vector>
+concept numeric = numeric2d<Vector> or numeric3d<Vector>;
+
 //
 // Vector types
 //
@@ -59,7 +90,27 @@ requires(Vector v) {
  * Useful for working with c-types that haven't defined vector operations.
  */
 template<class Vector>
+concept semi_vector = std::semiregular<Vector> and numeric<Vector>;
+template<class Vector>
 concept semi_vector2 = std::semiregular<Vector> and numeric2d<Vector>;
+template<class Vector>
+concept semi_vector3 = std::semiregular<Vector> and numeric3d<Vector>;
+
+/** A type that satisfies vector closure requirements
+ * 
+ * Requirements
+ * - closed under addition, subtraction and multiplication
+ */
+template<typename Field, class Vector>
+concept vector_closure = requires(Vector v, Field c) {
+    { v + v } -> std::same_as<Vector>;
+    { v - v } -> std::same_as<Vector>;
+    { c * v } -> std::same_as<Vector>;
+};
+
+/** Get the field type of a vector type. */
+template<with_x_component Vector>
+using field_t = std::remove_reference_t<decltype(std::declval<Vector>().x)>;
 
 /** A complete vector type.
  * 
@@ -68,13 +119,16 @@ concept semi_vector2 = std::semiregular<Vector> and numeric2d<Vector>;
  * - closed under addition, subtraction and multiplication
  */
 template<class Vector>
-concept vector2 =
-    std::regular<Vector> and numeric2d<Vector> and
-requires(Vector p) {
-    { p + p } -> std::same_as<Vector>;
-    { p - p } -> std::same_as<Vector>;
-    { p.x * p } -> std::same_as<Vector>;
-};
+concept vector = std::regular<Vector> and numeric<Vector> and
+                 vector_closure<field_t<Vector>, Vector>;
+
+template<class Vector>
+concept vector2 = std::regular<Vector> and numeric2d<Vector> and
+                  vector_closure<field_t<Vector>, Vector>;
+
+template<class Vector>
+concept vector3 = std::regular<Vector> and numeric3d<Vector> and
+                  vector_closure<field_t<Vector>, Vector>;
 
 //
 // Ordering
@@ -107,6 +161,7 @@ bool least_y(Vector const & u, Vector const & v)
  */
 template<ranges::input_range Range>
     requires semi_vector2<ranges::range_value_t<Range>>
+
 auto bounding_corners2d(Range && points)
 {
     using Vector = ranges::range_value_t<Range>;
