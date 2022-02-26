@@ -8,6 +8,8 @@
 // data structures and algorithms
 #include <algorithm>
 #include <utility>
+#include <cstddef>
+#include <array>
 
 namespace sp {
 
@@ -17,23 +19,28 @@ namespace ranges = std::ranges;
 // Components
 //
 
-/** A data type with a numeric x member. */
+/** A data type with a numeric x field. */
 template<class Vector>
 concept with_x_component = requires(Vector v) {
     v.x and std::is_arithmetic_v<std::remove_reference_t<decltype(v.x)>>;
 };
 
-/** A data type with a numeric y member. */
+/** A data type with a numeric y field. */
 template<class Vector>
 concept with_y_component = requires(Vector v) {
     v.y and std::is_arithmetic_v<std::remove_reference_t<decltype(v.y)>>;
 };
 
-/** A data type with a numeric z member. */
+/** A data type with a numeric z field. */
 template<class Vector>
 concept with_z_component = requires(Vector v) {
-    // Vector has a y member that's numeric
     v.z and std::is_arithmetic_v<std::remove_reference_t<decltype(v.z)>>;
+};
+
+/** A data type with arbitrary numeric fields. */
+template<class Vector>
+concept with_i_component = requires(Vector v, std::size_t i) {
+    v[i] and std::is_arithmetic_v<std::remove_reference_t<decltype(v[i])>>;
 };
 
 //
@@ -70,13 +77,51 @@ requires(Vector v) {
     Vector(v.x, v.y, v.z);
 };
 
+/** A data type with arbitrary numeric dimensions.
+ * 
+ * Requirements
+ * - has a numeric ith component
+ * - can be queried for size with std::size
+ */
+template<class Vector>
+concept numericNd =
+    with_i_component<Vector> and
+requires(Vector v) {
+    std::size(v);
+};
+
 /** A general numeric type.
  * 
  * Requirements
- *  - numeric2d or numeric3d
+ *  - numeric2d or numeric3d or numericNd
  */
 template<class Vector>
-concept numeric = numeric2d<Vector> or numeric3d<Vector>;
+concept numeric = numeric2d<Vector> or numeric3d<Vector> or numericNd<Vector>;
+
+//
+// Field type
+//
+
+/** Get the underlying field type of a vector type. */
+template<class Vector> struct field;
+
+template<with_x_component Vector>
+struct field<Vector> {
+    using type = std::remove_reference_t<decltype(std::declval<Vector>().x)>;
+};
+// it's possible that a vector type may support operator[] and have an x field
+// so in order to avoid ambiguity, we must specify for operator[] and not x field
+template<class Vector>
+    requires with_i_component<Vector> and (not with_x_component<Vector>)
+struct field<Vector> {
+    using type = std::remove_reference_t<
+        decltype(std::declval<Vector>()[std::declval<std::size_t>()])
+    >;
+};
+
+template<class Vector>
+requires with_x_component<Vector> or with_i_component<Vector>
+using field_t = typename field<Vector>::type;
 
 //
 // Vector types
@@ -95,22 +140,22 @@ template<class Vector>
 concept semi_vector2 = std::semiregular<Vector> and numeric2d<Vector>;
 template<class Vector>
 concept semi_vector3 = std::semiregular<Vector> and numeric3d<Vector>;
+template<class Vector>
+concept semi_vectorNd = std::semiregular<Vector> and numericNd<Vector>;
 
 /** A type that satisfies vector closure requirements
  * 
  * Requirements
  * - closed under addition, subtraction and multiplication
  */
-template<typename Field, class Vector>
-concept vector_closure = requires(Vector v, Field c) {
+template<class Vector>
+concept vector_closure =
+    (with_x_component<Vector> or with_i_component<Vector>) and
+requires(Vector v, field_t<Vector> c) {
     { v + v } -> std::same_as<Vector>;
     { v - v } -> std::same_as<Vector>;
     { c * v } -> std::same_as<Vector>;
 };
-
-/** Get the field type of a vector type. */
-template<with_x_component Vector>
-using field_t = std::remove_reference_t<decltype(std::declval<Vector>().x)>;
 
 /** A complete vector type.
  * 
@@ -120,15 +165,26 @@ using field_t = std::remove_reference_t<decltype(std::declval<Vector>().x)>;
  */
 template<class Vector>
 concept vector = std::regular<Vector> and numeric<Vector> and
-                 vector_closure<field_t<Vector>, Vector>;
+                 vector_closure<Vector>;
 
 template<class Vector>
 concept vector2 = std::regular<Vector> and numeric2d<Vector> and
-                  vector_closure<field_t<Vector>, Vector>;
+                  vector_closure<Vector>;
 
 template<class Vector>
 concept vector3 = std::regular<Vector> and numeric3d<Vector> and
-                  vector_closure<field_t<Vector>, Vector>;
+                  vector_closure<Vector>;
+
+template<class Vector>
+concept vectorNd = std::regular<Vector> and numericNd<Vector> and
+                   vector_closure<Vector>;
+
+
+// TODO: move to separate file
+
+//
+// Math Utilities
+//
 
 //
 // Ordering
@@ -145,10 +201,16 @@ bool least_y(Vector const & u, Vector const & v)
 {
     return u.y < v.y;
 }
-
-//
-// Utilities
-//
+template<with_z_component Vector>
+bool least_z(Vector const & u, Vector const & v)
+{
+    return u.z < v.z;
+}
+template<std::size_t i, with_i_component Vector>
+bool least_by_field(Vector const & u, Vector const & v)
+{
+    return u[i] < v[i];
+}
 
 /** Generate the bounding corners of a set of vectors.
  * 
