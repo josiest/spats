@@ -44,6 +44,31 @@ concept with_i_component = requires(Vector v, std::size_t i) {
 };
 
 //
+// Field type
+//
+
+/** Get the underlying field type of a vector type. */
+template<class Vector> struct field;
+
+template<with_x_component Vector>
+struct field<Vector> {
+    using type = std::remove_reference_t<decltype(std::declval<Vector>().x)>;
+};
+// it's possible that a vector type may support operator[] and have an x field
+// so in order to avoid ambiguity, we must specify for operator[] and not x field
+template<class Vector>
+    requires with_i_component<Vector> and (not with_x_component<Vector>)
+struct field<Vector> {
+    using type = std::remove_reference_t<
+        decltype(std::declval<Vector>()[std::declval<std::size_t>()])
+    >;
+};
+
+template<class Vector>
+requires with_x_component<Vector> or with_i_component<Vector>
+using field_t = typename field<Vector>::type;
+
+//
 // Numeric Types
 //
 
@@ -77,51 +102,13 @@ requires(Vector v) {
     Vector(v.x, v.y, v.z);
 };
 
-/** A data type with arbitrary numeric dimensions.
- * 
- * Requirements
- * - has a numeric ith component
- * - can be queried for size with std::size
- */
-template<class Vector>
-concept numericNd =
-    with_i_component<Vector> and
-requires(Vector v) {
-    std::size(v);
-};
-
 /** A general numeric type.
  * 
  * Requirements
  *  - numeric2d or numeric3d or numericNd
  */
 template<class Vector>
-concept numeric = numeric2d<Vector> or numeric3d<Vector> or numericNd<Vector>;
-
-//
-// Field type
-//
-
-/** Get the underlying field type of a vector type. */
-template<class Vector> struct field;
-
-template<with_x_component Vector>
-struct field<Vector> {
-    using type = std::remove_reference_t<decltype(std::declval<Vector>().x)>;
-};
-// it's possible that a vector type may support operator[] and have an x field
-// so in order to avoid ambiguity, we must specify for operator[] and not x field
-template<class Vector>
-    requires with_i_component<Vector> and (not with_x_component<Vector>)
-struct field<Vector> {
-    using type = std::remove_reference_t<
-        decltype(std::declval<Vector>()[std::declval<std::size_t>()])
-    >;
-};
-
-template<class Vector>
-requires with_x_component<Vector> or with_i_component<Vector>
-using field_t = typename field<Vector>::type;
+concept numeric = numeric2d<Vector> or numeric3d<Vector>;
 
 //
 // Vector types
@@ -140,8 +127,6 @@ template<class Vector>
 concept semi_vector2 = std::semiregular<Vector> and numeric2d<Vector>;
 template<class Vector>
 concept semi_vector3 = std::semiregular<Vector> and numeric3d<Vector>;
-template<class Vector>
-concept semi_vectorNd = std::semiregular<Vector> and numericNd<Vector>;
 
 /** A type that satisfies vector closure requirements
  * 
@@ -174,11 +159,6 @@ concept vector2 = std::regular<Vector> and numeric2d<Vector> and
 template<class Vector>
 concept vector3 = std::regular<Vector> and numeric3d<Vector> and
                   vector_closure<Vector>;
-
-template<class Vector>
-concept vectorNd = std::regular<Vector> and numericNd<Vector> and
-                   vector_closure<Vector>;
-
 
 // TODO: move to separate file
 
