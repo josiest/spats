@@ -1,3 +1,5 @@
+# directions
+
 Concepts and tools for working with spatial directions.
 
 # How to work with directions
