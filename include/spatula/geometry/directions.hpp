@@ -24,7 +24,9 @@ template<class Enum>
 using enum_size_v = enum_size<Enum>::value;
 
 template<>
-struct enum_size<cardinal::direction_name> { using value = 4; };
+struct enum_size<cardinal::direction_name> {
+    constexpr std::size_t value = 4;
+};
 
 /** An enum with sequential values defined from [0, enum_size_v<Enum>). */
 template<class Enum>

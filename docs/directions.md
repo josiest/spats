@@ -32,10 +32,10 @@ direction types.
 # direction conversions
 
 ## `sp::direction_as`
-```cpp
-template<[sp::field_constructible]() Vector, [sp::ranged_enum](#spranged_enum) Direction>
+{% highlight cpp %}
+template<[sp::field_constructible]() Vector, [sp::ranged_enum](spranged_enum) Direction>
 Vector sp::direction_as(Direction dir);
-```
+{% endhighlight %}
 Convert a direction from a `ranged_enum` to a unit vector
 
 ### Parameters
