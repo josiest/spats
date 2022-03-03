@@ -13,19 +13,12 @@
 namespace sp {
 
 /** An atomic constraint for field operations. */
-template<class Field>
-constexpr bool has_field_closure =
-    std::is_same_v<decltype(std::declval<Field>() +
-                            std::declVal<Field>()), Field> and
-
-    std::is_same_v<decltype(std::declval<Field>() -
-                            std::declVal<Field>()), Field> and
-
-    std::is_same_v<decltype(std::declval<Field>() *
-                            std::declVal<Field>()), Field> and
-
-    std::is_same_v<decltype(std::declval<Field>() /
-                            std::declVal<Field>()), Field>;
+template<typename Field>
+constexpr bool has_field_closure = requires(Field a, Field b) {
+    { a + b } -> std::same_as<Field>;
+    { a - b } -> std::same_as<Field>;
+    { a * b } -> std::same_as<Field>;
+    { a / b } -> std::same_as<Field>;
 };
 
 /** A type that models the field axioms.
@@ -53,21 +46,21 @@ namespace ranges = std::ranges;
 
 /** Require a type to have specific components subset to a field. */
 template<class Vector>
-constexpr bool has_x_component = has_field_closure<
-    std::remove_reference_t<decltype(std::declval<Vector>().x)>
->;
+constexpr bool has_x_component = requires(Vector v) {
+    has_field_closure<decltype(v.x)>;
+};
 template<class Vector>
-constexpr bool has_y_component = has_field_closure<
-    std::remove_reference_t<decltype(std::declval<Vector>().y)>
->;
+constexpr bool has_y_component = requires(Vector v) {
+    has_field_closure<decltype(v.y)>;
+};
 template<class Vector>
-constexpr bool has_z_component = has_field_closure<
-    std::remove_reference_t<decltype(std::declval<Vector>().z)>
->;
+constexpr bool has_z_component = requires(Vector v) {
+    has_field_closure<decltype(v.z)>;
+};
 template<class Vector>
-constexpr bool has_i_component = has_field_closure<std::remove_reference_t<
-    decltype(std::declval<Vector>()[std::declval<std::size_t>()])
->>;
+constexpr bool has_i_component = requires(Vector v, std::size_t i) {
+    has_field_closure<decltype(v[i])>;
+};
 
 //
 // Field type-deduction
@@ -107,17 +100,16 @@ using scalar_field_t = typename scalar_field<Vector>::type;
 template<class Vector>
 constexpr bool is_2d_numeric =
     has_x_component<Vector> and has_y_component<Vector> and
-    std::is_same_v<scalar_field_t<Vector>, decltype(std::declval<Vector>().x)> and
-    std::is_same_v<scalar_field_t<Vector>, decltype(std::declval<Vector>().y)>;
+requires(Vector v) {
+    { v.x } -> std::same_as<scalar_field_t<Vector>&>;
+    { v.y } -> std::same_as<scalar_field_t<Vector>&>;
+};
 
 template<class Vector>
 constexpr bool is_3d_numeric =
-    has_x_component<Vector> and has_y_component<Vector> and
-    has_z_component<Vector> and
-
-    std::is_same_v<scalar_field_t<Vector>, decltype(std::declval<Vector>().x)> and
-    std::is_same_v<scalar_field_t<Vector>, decltype(std::declval<Vector>().y)> and
-    std::is_same_v<scalar_field_t<Vector>, decltype(std::declval<Vector>().z)>;
+    is_2d_numeric<Vector> and has_z_component<Vector> and
+requires(Vector v) {
+    { v.z } -> std::same_as<scalar_field_t<Vector>>;
 };
  
 template<class Vector>
@@ -176,24 +168,30 @@ concept field_constructible = field_2d_constructible<Vector> or
  */
 template<class Vector>
 concept semivector2 = std::semiregular<Vector> and
-                      field_2d_constructible<Vector> and is_2d_numeric<Vector>;
+                      field_2d_constructible<Vector> and
+                      is_2d_numeric<Vector>;
+
 template<class Vector>
 concept semivector3 = std::semiregular<Vector> and
-                      field_3d_constructible<Vector> and is_3d_numeric<Vector>;
+                      field_3d_constructible<Vector> and
+                      is_3d_numeric<Vector>;
+
 template<class Vector>
 concept semivector = semivector2<Vector> or semivector3<Vector>;
 
 /** An atomic contraint for vector operations. */
 template<class Vector>
 constexpr bool has_vector_closure =
-    std::is_same_v<decltype(std::declval<Vector>() +
-                            std::declval<Vector>()), Vector> and
+requires(Vector a, Vector b, scalar_field_t<Vector> c) {
+    { a + b } -> std::same_as<Vector>;
+    { a - b } -> std::same_as<Vector>;
+    { c * a } -> std::same_as<Vector>;
+    { a * c } -> std::same_as<Vector>;
 
-    std::is_same_v<decltype(std::declval<Vector>() -
-                            std::declval<Vector>()), Vector> and
-
-    std::is_same_v<decltype(std::declval<scalar_field_t<Vector>>() *
-                            std::declval<Vector>()), Vector>;
+    { a += b } -> std::same_as<Vector&>;
+    { a -= b } -> std::same_as<Vector&>;
+    { a *= c } -> std::same_as<Vector&>;
+};
 
 /** A complete vector type.
  * 
@@ -208,11 +206,17 @@ constexpr bool has_vector_closure =
  * - c * a = (c * a[1], c * a[2], ..., c * a[3])
  */
 template<class Vector>
-concept vector2 = std::regular<Vector> and field_2d_constructible<Vector> and
-                  is_2d_numeric<Vector> and has_vector_closure<Vector>;
+concept vector2 = std::regular<Vector> and
+                  field_2d_constructible<Vector> and
+                  is_2d_numeric<Vector> and
+                  has_vector_closure<Vector>;
+
 template<class Vector>
-concept vector3 = std::regular<Vector> and field_3d_constructible<Vector> and
-                  is_3d_numeric<Vector> and has_vector_closure<Vector>;
+concept vector3 = std::regular<Vector> and
+                  field_3d_constructible<Vector> and
+                  is_3d_numeric<Vector> and
+                  has_vector_closure<Vector>;
+
 template<class Vector>
 concept vector = vector2<Vector> or vector3<Vector>;
 
