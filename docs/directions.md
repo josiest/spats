@@ -1,6 +1,11 @@
-# directions
+---
+layout: default
+title: directions
+nav_order: 2
+has_children: true
+---
 
-Concepts and tools for working with spatial directions.
+Defined in `<spatula/math/directions.hpp>`
 
 # How to work with directions
 

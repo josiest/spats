@@ -1,4 +1,12 @@
-# vectors
+---
+layout: default
+title: vectors
+nav_order: 1
+has_children: true
+has_toc: true
+---
+
+Defined in `<spatula/math/vectors.hpp>`
 
 # vector concepts and contraints
 
