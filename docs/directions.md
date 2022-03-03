@@ -1,11 +1,13 @@
 ---
 layout: default
 title: directions
-nav_order: 2
+nav_order: 4
 has_children: true
 ---
 
 Defined in `<spatula/math/directions.hpp>`
+
+{:toc}
 
 # How to work with directions
 
