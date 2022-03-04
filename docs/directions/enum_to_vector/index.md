@@ -1,6 +1,6 @@
 ---
 layout: default
-title: sp::enum_to_vector
+title: enum_to_vector
 parent: directions
 has_children: true
 ---

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: sp::direction_as
+title: direction_as
 parent: directions
 ---
 

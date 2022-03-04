@@ -1,7 +1,7 @@
 ---
 layout: default
-title: sp::enum_to_vector<Vector, Enum>::operator()
-parent: sp::enum_to_vector
+title: operator()
+parent: enum_to_vector
 ---
 
 ## `sp::enum_to_vector::operator()`
