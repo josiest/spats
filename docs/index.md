@@ -34,7 +34,7 @@ int main()
 
 ### Requirements
 - compiler for C++20 or later
-- cmake >= 18.0
+- cmake >= 3.18 (may work for earlier, but untested)
 
 ### Installation Instructions
 
