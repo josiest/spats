@@ -20,7 +20,7 @@ A specializable template function object for converting a direction enum to a
 vector.
 
 ### Member functions
-- [`operator()`](directions/enum_to_vector/operator().html) - convert an enum to a unit vector
+- [`operator()`](directions/enum_to_vector/operator_parens.html) - convert an enum to a unit vector
 
 ### Standard specializations
 
