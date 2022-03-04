@@ -1,6 +1,6 @@
 ---
 layout: default
-title: enum_size
+title: sp::enum_size
 parent: directions
 ---
 

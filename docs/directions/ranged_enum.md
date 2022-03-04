@@ -1,6 +1,6 @@
 ---
 layout: default
-title: ranged_enum
+title: sp::ranged_enum
 parent: directions
 ---
 

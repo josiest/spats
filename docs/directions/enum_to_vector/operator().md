@@ -1,7 +1,7 @@
 ---
 layout: default
-title: operator()
-parent: enum_to_vector
+title: sp::ranged_enum::operator()
+parent: sp::enum_to_vector
 grand_parent: directions
 ---
 
