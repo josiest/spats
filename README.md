@@ -8,7 +8,7 @@ One of the useful features of spatula are the spatial data concepts. These allow
 you to use operations like addition on arbitrary 
 ```cpp
 #include <spatula/math.hpp>
-#inlcude <glm/glm.hpp>
+#include <glm/glm.hpp>
 #include <SDL2/SDL.h>
 #include <iostream>
 

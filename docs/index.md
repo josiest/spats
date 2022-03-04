@@ -13,7 +13,7 @@ data types.
 
 ```cpp
 #include <spatula/math.hpp>
-#inlcude <glm/glm.hpp>
+#include <glm/glm.hpp>
 #include <SDL2/SDL.h>
 #include <iostream>
 
