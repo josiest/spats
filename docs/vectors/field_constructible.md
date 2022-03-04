@@ -1,8 +1,8 @@
---
+---
 layout: default
 title: sp::field_constructible
 parent: vectors
---
+---
 
 ## `sp::field_constructible`
 
