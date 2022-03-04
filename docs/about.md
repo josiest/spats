@@ -1,6 +1,6 @@
 ---
 layout: page
-title: About
+title: about
 permalink: /about/
 ---
 Spatula is a C++20 library for working with spatial data. The library currently
