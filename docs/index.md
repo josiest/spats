@@ -1,3 +1,9 @@
+---
+layout: default
+title: spatula
+nav_order: 1
+---
+
 # Documentation Overview
 - [What is spatula?](#What-is-spatula)
 - [Reference](#Reference)
