@@ -9,7 +9,7 @@ parent: directions
 ---
 
 <pre>
-template&lt;<a href="vectors.html#spfield_constructible">sp::field_constructible</a> Vector, <a href="#spranged_enum">sp::ranged_enum</a> Direction>
+template&lt;<a href="vectors.html#spfield_constructible">sp::field_constructible</a> Vector, <a href="ranged_enum.html">sp::ranged_enum</a> Direction>
 Vector sp::direction_as(Direction dir);
 </pre>
 

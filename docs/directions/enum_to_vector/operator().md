@@ -1,6 +1,6 @@
 ---
 layout: default
-title: sp::ranged_enum::operator()
+title: operator()
 parent: sp::enum_to_vector
 grand_parent: directions
 ---
@@ -9,7 +9,7 @@ grand_parent: directions
 
 ---
 
-<pre>Vector <a href="directions/enum_to_vector.html">sp::enum_to_vector</a>&lt;Enum, Vector>::operator()(Enum dir) const;
+<pre>Vector <a href="../enum_to_vector/">sp::enum_to_vector</a>&lt;Enum, Vector>::operator()(Enum dir) const;
 </pre>
 
 ---
