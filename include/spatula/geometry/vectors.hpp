@@ -50,20 +50,35 @@ constexpr bool has_x_component = requires(Vector v) {
     has_field_closure<decltype(v.x)>;
 };
 template<class Vector>
+constexpr bool has_X_component = requires(Vector v) {
+    has_field_closure<decltype(v.X)>;
+};
+
+template<class Vector>
 constexpr bool has_y_component = requires(Vector v) {
     has_field_closure<decltype(v.y)>;
 };
 template<class Vector>
+constexpr bool has_Y_component = requires(Vector v) {
+    has_field_closure<decltype(v.Y)>;
+};
+
+template<class Vector>
 constexpr bool has_z_component = requires(Vector v) {
     has_field_closure<decltype(v.z)>;
 };
+template<class Vector>
+constexpr bool has_Z_component = requires(Vector v) {
+    has_field_closure<decltype(v.Z)>;
+};
+
 template<class Vector>
 constexpr bool has_i_component = requires(Vector v, std::size_t i) {
     has_field_closure<decltype(v[i])>;
 };
 
 //
-// Field type-deduction
+// Scalar fields
 //
 
 /** The scalar field type of a vector. */
@@ -74,10 +89,18 @@ template<class Vector>
 struct scalar_field<Vector> {
     using type = std::remove_reference_t<decltype(std::declval<Vector>().x)>;
 };
+template<class Vector>
+    requires has_X_component<Vector>
+struct scalar_field<Vector> {
+    using type = std::remove_reference_t<decltype(std::declval<Vector>().X)>;
+};
+
 // it's possible that a vector type may support operator[] and have an x field
 // so in order to avoid ambiguity, we must specify for operator[] and not x field
 template<class Vector>
-    requires has_i_component<Vector> and (not has_x_component<Vector>)
+    requires has_i_component<Vector> and not
+             (has_x_component<Vector> or has_X_component<Vector>)
+
 struct scalar_field<Vector> {
     using type = std::remove_reference_t<
         decltype(std::declval<Vector>()[std::declval<std::size_t>()])
@@ -86,6 +109,183 @@ struct scalar_field<Vector> {
 
 template<class Vector>
 using scalar_field_t = typename scalar_field<Vector>::type;
+
+/** Get the x component of a vector */
+template<class Vector> struct x_getter{
+    scalar_field_t<Vector> const & operator()(Vector const & v) const;
+    scalar_field_t<Vector> & operator()(Vector & v) const;
+};
+
+template<class Vector>
+    requires has_x_component<Vector>
+struct x_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v.x;
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v.x;
+    }
+};
+
+template<class Vector>
+    requires has_X_component<Vector>
+struct x_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v.X;
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v.X;
+    }
+};
+
+/** Get the y component of a vector */
+template<class Vector> struct y_getter{
+    scalar_field_t<Vector> const & operator()(Vector const & v) const;
+    scalar_field_t<Vector> & operator()(Vector & v) const;
+};
+
+template<class Vector>
+    requires has_y_component<Vector>
+struct y_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v.y;
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v.y;
+    }
+};
+
+template<class Vector>
+    requires has_Y_component<Vector>
+struct y_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v.Y;
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v.Y;
+    }
+};
+
+template<class Vector>
+    requires has_i_component<Vector> and not
+            (has_y_component<Vector> or has_Y_component<Vector>)
+struct y_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v[1];
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v[1];
+    }
+};
+
+/** Get the z component of a vector */
+template<class Vector> struct z_getter{
+    scalar_field_t<Vector> const & operator()(Vector const & v) const;
+    scalar_field_t<Vector> & operator()(Vector & v) const;
+};
+
+template<class Vector>
+    requires has_z_component<Vector>
+struct z_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v.z;
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v.z;
+    }
+};
+
+template<class Vector>
+    requires has_Z_component<Vector>
+struct z_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v.Z;
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v.Z;
+    }
+};
+
+template<class Vector>
+    requires has_i_component<Vector> and not
+            (has_z_component<Vector> or has_Z_component<Vector>)
+struct z_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v[2];
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v[2];
+    }
+};
+
+template<class Vector>
+    requires has_i_component<Vector> and not
+            (has_z_component<Vector> or has_Z_component<Vector>)
+struct z_getter<Vector> {
+    scalar_field_t<Vector> const & operator()(Vector const & v) const
+    {
+        return v[2];
+    }
+    scalar_field_t<Vector> & operator()(Vector & v) const
+    {
+        return v[2];
+    }
+};
+
+template<class Vector>
+scalar_field_t<Vector> const & get_x(Vector const & v)
+{
+    static x_getter<Vector> _get_x;
+    return _get_x(v);
+}
+template<class Vector>
+scalar_field_t<Vector> & get_x(Vector & v)
+{
+    static x_getter<Vector> _get_x;
+    return _get_x(v);
+}
+
+template<class Vector>
+scalar_field_t<Vector> const & get_y(Vector const & v)
+{
+    static y_getter<Vector> _get_y;
+    return _get_y(v);
+}
+template<class Vector>
+scalar_field_t<Vector> & get_y(Vector & v)
+{
+    static y_getter<Vector> _get_y;
+    return _get_y(v);
+}
+
+template<class Vector>
+scalar_field_t<Vector> const & get_z(Vector const & v)
+{
+    static z_getter<Vector> _get_z;
+    return _get_z(v);
+}
+template<class Vector>
+scalar_field_t<Vector> & get_z(Vector & v)
+{
+    static z_getter<Vector> _get_z;
+    return _get_z(v);
+}
 
 //
 // Atomic numeric-type constraints
