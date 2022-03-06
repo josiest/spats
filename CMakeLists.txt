@@ -5,9 +5,9 @@ cmake_minimum_required(VERSION 3.18)
 #
 
 project(spatula VERSION 1.0.0
-	    DESCRIPTION "Spatial manipulation with modern C++"
-	    HOMEPAGE_URL "https://github.com/josiest/spatula"
-	    LANGUAGES CXX)
+        DESCRIPTION "Spatial manipulation with modern C++"
+        HOMEPAGE_URL "https://github.com/josiest/spatula"
+        LANGUAGES CXX)
 
 add_library(spatula INTERFACE)
 add_library(sp::spatula ALIAS spatula)
