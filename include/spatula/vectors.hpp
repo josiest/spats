@@ -411,21 +411,24 @@ constexpr bool is_numeric = is_2d_numeric<Vector> or is_3d_numeric<Vector> or
  *   y member and 2 to the x member.
  */
 template<class Vector>
-concept field_2d_constructible = std::constructible_from<
-    Vector, scalar_field_t<Vector>, scalar_field_t<Vector>
->;
+concept field_2d_constructible =
+requires(scalar_field_t<Vector> x, scalar_field_t<Vector> y) {
+    Vector{x, y};
+};
 
 template<class Vector>
-concept field_3d_constructible = std::constructible_from<
-    Vector, scalar_field_t<Vector>, scalar_field_t<Vector>,
-            scalar_field_t<Vector>
->;
+concept field_3d_constructible =
+requires(scalar_field_t<Vector> x, scalar_field_t<Vector> y,
+         scalar_field_t<Vector> z) {
+    Vector{x, y, z};
+};
 
 template<class Vector>
-concept field_4d_constructible = std::constructible_from<
-    Vector, scalar_field_t<Vector>, scalar_field_t<Vector>,
-            scalar_field_t<Vector>, scalar_field_t<Vector>
->;
+concept field_4d_constructible =
+requires(scalar_field_t<Vector> x, scalar_field_t<Vector> y,
+         scalar_field_t<Vector> z, scalar_field_t<Vector> w) {
+    Vector{x, y, z, w};
+};
 
 template<class Vector>
 concept field_constructible = field_2d_constructible<Vector> or

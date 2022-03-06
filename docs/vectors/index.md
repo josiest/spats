@@ -88,12 +88,11 @@ vectors:
 - [`glm`](https://github.com/g-truc/glm/blob/master/manual.md)'s
   [vector types](https://glm.g-truc.net/0.9.2/api/a00155.html)
 - [`SFML`](https://www.sfml-dev.org/index.php)'s
-  [`sf::Vector2`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Vector2.php)
-  and
-  [`sf::Vector3`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Vector3.php)
-  types
+  [`sf::Vector2`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Vector2.php) and
+  [`sf::Vector3`](https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Vector3.php) types
 - [Unreal Engine](https://www.unrealengine.com/en-US/)'s
-  [`FVector`](https://docs.unrealengine.com/4.26/en-US/API/Runtime/Core/Math/FVector)
+  [`FVector`](https://docs.unrealengine.com/4.26/en-US/API/Runtime/Core/Math/FVector) and
+  [`FQuat`](https://docs.unrealengine.com/4.27/en-US/API/Runtime/Core/Math/FQuat/) types
 
 #### Note:
 - [`Eigen`](https://eigen.tuxfamily.org/index.php?title=Main_Page)'s
