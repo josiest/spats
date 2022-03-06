@@ -144,6 +144,21 @@ auto dot(sp::semivector3 auto const & a, sp::semivector3 auto const & b)
   [`sp::semivector`](semivector.html) will _also_ work for
   [`sp::vector`](vector.html).
 
+Alternatively, you can also limit the vectors to have specifically named
+components - but this will break compatibility with certain vector types:
+
+```cpp
+template<class Vector>
+    // if it models semivector3 and has an x component, standards dictate that
+    // it likely has y and z components as well
+    require sp::semivector3<Vector> and sp::has_x_component<Vector>
+
+auto dot(Vector const & a, Vector const & b)
+{
+    return a.x*b.x + a.y*b.y + a.z*b.z;
+}
+```
+
 # vector components
 
 ## example: partial ordering
