@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <cstddef>
 
 #include <SDL2/SDL.h>
 #include <SFML/System.hpp>
@@ -23,6 +24,22 @@ struct ipoint2X2 { int X, Y; };
 struct lpoint3X2 { long X, Y, Z; };
 struct fpoint2X2 { float X, Y; };
 struct dpoint3X2 { double X, Y, Z; };
+
+struct comp_and_idx_vec {
+    int x, y, z;
+    int & operator[](std::size_t i)
+    {
+        if (i % 3 == 0) { return x; }
+        else if (i % 3 == 1) { return y; }
+        else { return z; }
+    }
+    int const & operator[](std::size_t i) const
+    {
+        if (i % 3 == 0) { return x; }
+        else if (i % 3 == 1) { return y; }
+        else { return z; }
+    }
+};
 
 TEST_CASE("scalar field: x component", "[scalar_field]") {
     REQUIRE(std::same_as<scalar_field_t<chpoint3x2>, char>);
@@ -53,6 +70,7 @@ TEST_CASE("scalar field: string i component", "[scalar_field]") {
 }
 
 TEST_CASE("scalar field: i and x component", "[scalar_field]") {
+    REQUIRE(std::same_as<scalar_field_t<comp_and_idx_vec>, int>);
 }
 
 TEST_CASE("scalar field: sdl spatial structs", "[scalar_field]") {
