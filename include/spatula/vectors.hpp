@@ -78,6 +78,15 @@ constexpr bool has_Z_component = requires(Vector v) {
 };
 
 template<class Vector>
+constexpr bool has_w_component = requires(Vector v) {
+    has_field_closure<decltype(v.w)>;
+};
+template<class Vector>
+constexpr bool has_W_component = requires(Vector v) {
+    has_field_closure<decltype(v.W)>;
+};
+
+template<class Vector>
 constexpr bool has_i_component = requires(Vector v, std::size_t i) {
     has_field_closure<decltype(v[i])>;
 };
@@ -239,6 +248,52 @@ struct z_getter<Vector> {
     }
 };
 
+/** Get the w component of a vector */
+template<class Vector> struct w_getter{
+    auto const & operator()(Vector const & v) const;
+    auto & operator()(Vector & v) const;
+};
+
+template<class Vector>
+    requires has_w_component<Vector>
+struct w_getter<Vector> {
+    auto const & operator()(Vector const & v) const
+    {
+        return v.w;
+    }
+    auto & operator()(Vector & v) const
+    {
+        return v.w;
+    }
+};
+
+template<class Vector>
+    requires has_W_component<Vector>
+struct w_getter<Vector> {
+    auto const & operator()(Vector const & v) const
+    {
+        return v.W;
+    }
+    auto & operator()(Vector & v) const
+    {
+        return v.W;
+    }
+};
+
+template<class Vector>
+    requires has_i_component<Vector> and 
+            (not (has_w_component<Vector> or has_W_component<Vector>))
+struct w_getter<Vector> {
+    auto const & operator()(Vector const & v) const
+    {
+        return v[3];
+    }
+    auto & operator()(Vector & v) const
+    {
+        return v[3];
+    }
+};
+
 template<class Vector>
 scalar_field_t<Vector> const & get_x(Vector const & v)
 {
@@ -278,6 +333,19 @@ scalar_field_t<Vector> & get_z(Vector & v)
     return _get_z(v);
 }
 
+template<class Vector>
+scalar_field_t<Vector> const & get_w(Vector const & v)
+{
+    static w_getter<Vector> _get_w;
+    return _get_w(v);
+}
+template<class Vector>
+scalar_field_t<Vector> & get_w(Vector & v)
+{
+    static w_getter<Vector> _get_w;
+    return _get_w(v);
+}
+
 //
 // Atomic numeric-type constraints
 //
@@ -292,19 +360,27 @@ template<class Vector>
 constexpr bool is_2d_numeric =
     has_x_component<Vector> and has_y_component<Vector> and
 requires(Vector v) {
-    { v.x } -> std::same_as<scalar_field_t<Vector>&>;
-    { v.y } -> std::same_as<scalar_field_t<Vector>&>;
+    { get_x(v) } -> std::same_as<scalar_field_t<Vector>>;
+    { get_y(v) } -> std::same_as<scalar_field_t<Vector>>;
 };
 
 template<class Vector>
 constexpr bool is_3d_numeric =
     is_2d_numeric<Vector> and has_z_component<Vector> and
 requires(Vector v) {
-    { v.z } -> std::same_as<scalar_field_t<Vector>>;
+    { get_z(v) } -> std::same_as<scalar_field_t<Vector>>;
+};
+
+template<class Vector>
+constexpr bool is_4d_numeric =
+    is_3d_numeric<Vector> and has_w_component<Vector> and
+requires(Vector v) {
+    { get_w(v) } -> std::same_as<scalar_field_t<Vector>>;
 };
  
 template<class Vector>
-constexpr bool is_numeric = is_2d_numeric<Vector> or is_3d_numeric<Vector>;
+constexpr bool is_numeric = is_2d_numeric<Vector> or is_3d_numeric<Vector> or
+                            is_4d_numeric<Vector>;
 
 //
 // Constructible concepts
@@ -346,8 +422,15 @@ concept field_3d_constructible = std::constructible_from<
 >;
 
 template<class Vector>
+concept field_4d_constructible = std::constructible_from<
+    Vector, scalar_field_t<Vector>, scalar_field_t<Vector>,
+            scalar_field_t<Vector>, scalar_field_t<Vector>
+>;
+
+template<class Vector>
 concept field_constructible = field_2d_constructible<Vector> or
-                              field_3d_constructible<Vector>;
+                              field_3d_constructible<Vector> or
+                              field_4d_constructible<Vector>;
 
 //
 // Vector concepts
@@ -368,7 +451,13 @@ concept semivector3 = std::semiregular<Vector> and
                       is_3d_numeric<Vector>;
 
 template<class Vector>
-concept semivector = semivector2<Vector> or semivector3<Vector>;
+concept semivector4 = std::semiregular<Vector> and
+                      field_4d_constructible<Vector> and
+                      is_4d_numeric<Vector>;
+
+template<class Vector>
+concept semivector = semivector2<Vector> or semivector3<Vector> or
+                     semivector4<Vector>;
 
 /** An atomic contraint for vector operations. */
 template<class Vector>
@@ -409,7 +498,13 @@ concept vector3 = std::regular<Vector> and
                   has_vector_closure<Vector>;
 
 template<class Vector>
-concept vector = vector2<Vector> or vector3<Vector>;
+concept vector4 = std::regular<Vector> and
+                  field_4d_constructible<Vector> and
+                  is_4d_numeric<Vector> and
+                  has_vector_closure<Vector>;
+
+template<class Vector>
+concept vector = vector2<Vector> or vector3<Vector> or vector4<Vector>;
 
 //
 // Math Utilities
@@ -425,22 +520,30 @@ template<class Vector>
              std::totally_ordered<scalar_field_t<Vector>>
 bool least_x(Vector const & u, Vector const & v)
 {
-    return u.x < v.x;
+    return get_x(u) < get_x(v);
 }
 template<class Vector>
     requires has_y_component<Vector> and
              std::totally_ordered<scalar_field_t<Vector>>
 bool least_y(Vector const & u, Vector const & v)
 {
-    return u.y < v.y;
+    return get_y(u) < get_y(v);
 }
 template<class Vector>
     requires has_z_component<Vector> and
              std::totally_ordered<scalar_field_t<Vector>>
 bool least_z(Vector const & u, Vector const & v)
 {
-    return u.z < v.z;
+    return get_z(u) < get_z(v);
 }
+template<class Vector>
+    requires has_w_component<Vector> and
+             std::totally_ordered<scalar_field_t<Vector>>
+bool least_w(Vector const & u, Vector const & v)
+{
+    return get_w(u) < get_w(v);
+}
+
 template<std::size_t i, class Vector>
     requires has_i_component<Vector> and
              std::totally_ordered<scalar_field_t<Vector>>
@@ -470,7 +573,9 @@ auto bounding_corners2d(Range && points)
     auto const &[xmin, xmax] = ranges::minmax(points, least_x);
     auto const &[ymin, ymax] = ranges::minmax(points, least_y);
 
-    return std::make_pair(Vector(xmin.x, ymin.y), Vector(xmax.x, ymax.y));
+    Vector min(get_x(xmin), get_y(ymin));
+    Vector max(get_x(xmax), get_y(ymax));
+    return std::make_pair(min, max);
 }
 
 }

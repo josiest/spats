@@ -97,10 +97,11 @@ vectors:
 
 #### Note:
 - [`Eigen`](https://eigen.tuxfamily.org/index.php?title=Main_Page)'s
-  [matrix types](https://eigen.tuxfamily.org/dox/group__TutorialMatrixArithmetic.html)
-  are also _almost_ compatible with [`sp::vector`](vector.html), but they access
-  components by index and not by name. spatula will also add support for this in
-  the very nearby future.
+  [Vector types](https://eigen.tuxfamily.org/dox-devel/group__matrixtypedefs.html)
+  are also
+  [_almost_ compatible](https://eigen.tuxfamily.org/dox/group__TutorialMatrixArithmetic.html)
+  with [`sp::vector`](vector.html), but they access components by index and not
+  by name. spatula will also add support for this in the very nearby future.
 
 ## "plain old" vectors
 
