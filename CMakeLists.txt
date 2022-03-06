@@ -11,9 +11,11 @@ project(spatula VERSION 1.0.0
 
 add_library(spatula INTERFACE)
 add_library(sp::spatula ALIAS spatula)
-set_target_properties(spatula PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED true)   
+
+option(run_tests OFF)
+if (run_tests)
+    add_subdirectory(test)
+endif()
 
 #
 # Export the library package
