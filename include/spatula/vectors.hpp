@@ -295,6 +295,26 @@ struct w_getter<Vector> {
 };
 
 template<class Vector>
+constexpr bool has_1d_component =
+    has_x_component<Vector> or has_X_component<Vector> or
+    has_i_component<Vector>;
+
+template<class Vector>
+constexpr bool has_2d_component =
+    has_y_component<Vector> or has_Y_component<Vector> or
+    has_i_component<Vector>;
+
+template<class Vector>
+constexpr bool has_3d_component =
+    has_z_component<Vector> or has_Z_component<Vector> or
+    has_i_component<Vector>;
+
+template<class Vector>
+constexpr bool has_4d_component =
+    has_w_component<Vector> or has_W_component<Vector> or
+    has_i_component<Vector>;
+
+template<class Vector>
 scalar_field_t<Vector> const & get_x(Vector const & v)
 {
     static x_getter<Vector> _get_x;
@@ -358,24 +378,24 @@ scalar_field_t<Vector> & get_w(Vector & v)
  */
 template<class Vector>
 constexpr bool is_2d_numeric =
-    has_x_component<Vector> and has_y_component<Vector> and
+    has_1d_component<Vector> and has_2d_component<Vector> and
 requires(Vector v) {
-    { get_x(v) } -> std::same_as<scalar_field_t<Vector>>;
-    { get_y(v) } -> std::same_as<scalar_field_t<Vector>>;
+    { get_x(v) } -> std::same_as<scalar_field_t<Vector>&>;
+    { get_y(v) } -> std::same_as<scalar_field_t<Vector>&>;
 };
 
 template<class Vector>
 constexpr bool is_3d_numeric =
-    is_2d_numeric<Vector> and has_z_component<Vector> and
+    is_2d_numeric<Vector> and has_3d_component<Vector> and
 requires(Vector v) {
-    { get_z(v) } -> std::same_as<scalar_field_t<Vector>>;
+    { get_z(v) } -> std::same_as<scalar_field_t<Vector>&>;
 };
 
 template<class Vector>
 constexpr bool is_4d_numeric =
-    is_3d_numeric<Vector> and has_w_component<Vector> and
+    is_3d_numeric<Vector> and has_4d_component<Vector> and
 requires(Vector v) {
-    { get_w(v) } -> std::same_as<scalar_field_t<Vector>>;
+    { get_w(v) } -> std::same_as<scalar_field_t<Vector>&>;
 };
  
 template<class Vector>
