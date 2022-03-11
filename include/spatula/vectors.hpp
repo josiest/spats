@@ -94,7 +94,7 @@ constexpr bool has_i_component = requires(Vector v, std::size_t i) {
 
 template<class Vector>
 constexpr bool has_static_size = requires {
-    { std::tuple_size<Vector>::value } -> std::unsigned_integral;
+    std::tuple_size<Vector>::value;
 };
 
 template<class Vector, std::size_t N>

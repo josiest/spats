@@ -1,5 +1,15 @@
 #include <catch2/catch.hpp>
+
 #include "spatula/vectors.hpp"
+
+#include <SDL2/SDL.h>
+#include <SFML/System.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <Eigen/Dense>
+#include <spatula_extensions/eigen.hpp>
+
 #include <vector>
 #include <string>
 
@@ -20,6 +30,8 @@ struct point3dX { double X, Y, Z; };
 struct point4chx { char x, y, z, w; };
 struct point4fX { float X, Y, Z, W; };
 }
+
+namespace eig = Eigen;
 
 using namespace sp;
 using namespace test_has_component;
@@ -152,4 +164,92 @@ TEST_CASE("has-1d-component", "[has_component]") {
     REQUIRE(has_1d_component<glm::vec2>);
     REQUIRE(has_1d_component<glm::ivec3>);
     REQUIRE(has_1d_component<glm::dvec4>);
+
+    REQUIRE(has_1d_component<sf::Vector2f>);
+    REQUIRE(has_1d_component<sf::Vector3i>);
+
+    REQUIRE(has_1d_component<eig::Vector2i>);
+    REQUIRE(has_1d_component<eig::Vector4f>);
+
+    REQUIRE(has_1d_component<std::array<float, 2>>);
+    REQUIRE(has_1d_component<std::array<long, 4>>);
+
+    REQUIRE(not has_1d_component<std::vector<int>>);
+    REQUIRE(not has_1d_component<std::vector<float>>);
+    REQUIRE(not has_1d_component<std::vector<std::string>>);
+    REQUIRE(not has_1d_component<std::string>);
+}
+
+TEST_CASE("has-2d-component", "[has_component]") {
+    REQUIRE(has_2d_component<point2ix>);
+    REQUIRE(has_2d_component<SDL_Point>);
+
+    REQUIRE(has_2d_component<glm::vec2>);
+    REQUIRE(has_2d_component<glm::ivec3>);
+    REQUIRE(has_2d_component<glm::dvec4>);
+
+    REQUIRE(has_2d_component<sf::Vector2f>);
+    REQUIRE(has_2d_component<sf::Vector3i>);
+
+    REQUIRE(has_2d_component<eig::Vector2d>);
+    REQUIRE(has_2d_component<eig::Vector3i>);
+
+    REQUIRE(has_2d_component<std::array<float, 2>>);
+    REQUIRE(has_2d_component<std::array<long, 4>>);
+    REQUIRE(not has_2d_component<std::array<double, 1>>);
+
+    REQUIRE(not has_2d_component<std::vector<long>>);
+    REQUIRE(not has_2d_component<std::vector<double>>);
+    REQUIRE(not has_2d_component<std::vector<std::string>>);
+    REQUIRE(not has_2d_component<std::string>);
+}
+
+TEST_CASE("has-3d-component", "[has_component]") {
+    REQUIRE(not has_3d_component<point2fx>);
+    REQUIRE(not has_3d_component<SDL_Point>);
+
+    REQUIRE(not has_3d_component<glm::dvec2>);
+    REQUIRE(has_3d_component<glm::vec3>);
+    REQUIRE(has_3d_component<glm::ivec4>);
+
+    REQUIRE(not has_3d_component<sf::Vector2u>);
+    REQUIRE(has_3d_component<sf::Vector3f>);
+
+    REQUIRE(not has_3d_component<eig::Vector2cf>);
+    REQUIRE(has_3d_component<eig::Vector3d>);
+    REQUIRE(has_3d_component<eig::Vector4i>);
+
+    REQUIRE(has_3d_component<std::array<int, 3>>);
+    REQUIRE(has_3d_component<std::array<short, 4>>);
+    REQUIRE(not has_3d_component<std::array<float, 2>>);
+
+    REQUIRE(not has_3d_component<std::vector<char>>);
+    REQUIRE(not has_3d_component<std::vector<float>>);
+    REQUIRE(not has_3d_component<std::vector<std::string>>);
+    REQUIRE(not has_3d_component<std::string>);
+}
+
+TEST_CASE("has-4d-component", "[has_component]") {
+    REQUIRE(not has_4d_component<point2fx>);
+    REQUIRE(not has_4d_component<SDL_Point>);
+
+    REQUIRE(not has_4d_component<glm::ivec2>);
+    REQUIRE(not has_4d_component<glm::dvec3>);
+    REQUIRE(has_4d_component<glm::vec4>);
+
+    REQUIRE(not has_4d_component<sf::Vector2f>);
+    REQUIRE(not has_4d_component<sf::Vector3i>);
+
+    REQUIRE(not has_4d_component<eig::Vector2cd>);
+    REQUIRE(not has_4d_component<eig::Vector3f>);
+    REQUIRE(has_4d_component<eig::Vector4i>);
+
+    REQUIRE(has_4d_component<std::array<double, 4>>);
+    REQUIRE(not has_4d_component<std::array<float, 3>>);
+    REQUIRE(not has_4d_component<std::array<int, 2>>);
+
+    REQUIRE(not has_4d_component<std::vector<char>>);
+    REQUIRE(not has_4d_component<std::vector<float>>);
+    REQUIRE(not has_4d_component<std::vector<std::string>>);
+    REQUIRE(not has_4d_component<std::string>);
 }
