@@ -46,6 +46,20 @@ TEST_CASE("has-x-component", "[has_component]") {
     REQUIRE(not has_x_component<point2fX>);
     REQUIRE(not has_x_component<point3chX>);
     REQUIRE(not has_x_component<point3dX>);
+
+    REQUIRE(has_x_component<SDL_Point>);
+    REQUIRE(has_x_component<sf::Vector2i>);
+    REQUIRE(has_x_component<sf::Vector2f>);
+    REQUIRE(has_x_component<sf::Vector3f>);
+
+    REQUIRE(has_x_component<glm::ivec2>);
+    REQUIRE(has_x_component<glm::vec3>);
+    REQUIRE(has_x_component<glm::dvec4>);
+
+    REQUIRE(not has_x_component<eig::Vector2d>);
+    REQUIRE(not has_x_component<eig::Vector3cd>);
+    REQUIRE(not has_x_component<eig::Vector4i>);
+
     REQUIRE(not has_x_component<std::vector<int>>);
     REQUIRE(not has_x_component<std::string>);
 }
@@ -55,6 +69,19 @@ TEST_CASE("has-X-component", "[has_component]") {
     REQUIRE(has_X_component<point2fX>);
     REQUIRE(has_X_component<point3chX>);
     REQUIRE(has_X_component<point3dX>);
+
+    REQUIRE(not has_X_component<SDL_Point>);
+    REQUIRE(not has_X_component<sf::Vector2i>);
+    REQUIRE(not has_X_component<sf::Vector2f>);
+    REQUIRE(not has_X_component<sf::Vector3f>);
+
+    REQUIRE(not has_X_component<glm::ivec2>);
+    REQUIRE(not has_X_component<glm::vec3>);
+    REQUIRE(not has_X_component<glm::dvec4>);
+
+    REQUIRE(not has_X_component<eig::Vector2d>);
+    REQUIRE(not has_X_component<eig::Vector3cd>);
+    REQUIRE(not has_X_component<eig::Vector4i>);
 
     REQUIRE(not has_X_component<point2ix>);
     REQUIRE(not has_X_component<point2fx>);
@@ -70,6 +97,19 @@ TEST_CASE("has-y-component", "[has_component]") {
     REQUIRE(has_y_component<point3ix>);
     REQUIRE(has_y_component<point3dx>);
 
+    REQUIRE(has_y_component<SDL_Point>);
+    REQUIRE(has_y_component<sf::Vector2f>);
+    REQUIRE(has_y_component<sf::Vector2u>);
+    REQUIRE(has_y_component<sf::Vector3i>);
+
+    REQUIRE(has_y_component<glm::dvec2>);
+    REQUIRE(has_y_component<glm::uvec3>);
+    REQUIRE(has_y_component<glm::vec4>);
+
+    REQUIRE(not has_y_component<eig::Vector2i>);
+    REQUIRE(not has_y_component<eig::Vector3d>);
+    REQUIRE(not has_y_component<eig::Vector4cf>);
+
     REQUIRE(not has_y_component<point2iX>);
     REQUIRE(not has_y_component<point2fX>);
     REQUIRE(not has_y_component<point3chX>);
@@ -84,6 +124,19 @@ TEST_CASE("has-Y-component", "[has_component]") {
     REQUIRE(has_Y_component<point3chX>);
     REQUIRE(has_Y_component<point3dX>);
 
+    REQUIRE(not has_Y_component<SDL_Point>);
+    REQUIRE(not has_Y_component<sf::Vector2u>);
+    REQUIRE(not has_Y_component<sf::Vector2i>);
+    REQUIRE(not has_Y_component<sf::Vector3f>);
+
+    REQUIRE(not has_Y_component<glm::dvec2>);
+    REQUIRE(not has_Y_component<glm::ivec3>);
+    REQUIRE(not has_Y_component<glm::vec4>);
+
+    REQUIRE(not has_Y_component<eig::Vector2i>);
+    REQUIRE(not has_Y_component<eig::Vector3cf>);
+    REQUIRE(not has_Y_component<eig::Vector4f>);
+
     REQUIRE(not has_Y_component<point2ix>);
     REQUIRE(not has_Y_component<point2fx>);
     REQUIRE(not has_Y_component<point3ix>);
@@ -94,6 +147,19 @@ TEST_CASE("has-Y-component", "[has_component]") {
 TEST_CASE("has-z-component", "[has_component]") {
     REQUIRE(has_z_component<point3ix>);
     REQUIRE(has_z_component<point3dx>);
+
+    REQUIRE(not has_z_component<SDL_Point>);
+    REQUIRE(not has_z_component<sf::Vector2f>);
+    REQUIRE(not has_z_component<sf::Vector2i>);
+    REQUIRE(has_z_component<sf::Vector3i>);
+
+    REQUIRE(not has_z_component<glm::ivec2>);
+    REQUIRE(has_z_component<glm::vec3>);
+    REQUIRE(has_z_component<glm::dvec4>);
+
+    REQUIRE(not has_z_component<eig::Vector2cd>);
+    REQUIRE(not has_z_component<eig::Vector3i>);
+    REQUIRE(not has_z_component<eig::Vector4f>);
 
     REQUIRE(not has_z_component<point2ix>);
     REQUIRE(not has_z_component<point2fx>);
@@ -108,6 +174,19 @@ TEST_CASE("has-z-component", "[has_component]") {
 TEST_CASE("has-Z-component", "[has_component]") {
     REQUIRE(has_Z_component<point3chX>);
     REQUIRE(has_Z_component<point3dX>);
+
+    REQUIRE(not has_Z_component<SDL_Point>);
+    REQUIRE(not has_Z_component<sf::Vector2f>);
+    REQUIRE(not has_Z_component<sf::Vector2i>);
+    REQUIRE(not has_Z_component<sf::Vector3i>);
+
+    REQUIRE(not has_Z_component<glm::vec2>);
+    REQUIRE(not has_Z_component<glm::vec3>);
+    REQUIRE(not has_Z_component<glm::vec4>);
+
+    REQUIRE(not has_Z_component<eig::Vector2cd>);
+    REQUIRE(not has_Z_component<eig::Vector3i>);
+    REQUIRE(not has_Z_component<eig::Vector4d>);
 
     REQUIRE(not has_Z_component<point2iX>);
     REQUIRE(not has_Z_component<point2fX>);
@@ -125,6 +204,19 @@ TEST_CASE("has-w-component", "[has_component]") {
     REQUIRE(has_w_component<glm::ivec4>);
     REQUIRE(has_w_component<glm::dvec4>);
 
+    REQUIRE(not has_w_component<SDL_Point>);
+    REQUIRE(not has_w_component<sf::Vector2f>);
+    REQUIRE(not has_w_component<sf::Vector2i>);
+    REQUIRE(not has_w_component<sf::Vector3i>);
+
+    REQUIRE(not has_w_component<glm::ivec2>);
+    REQUIRE(not has_w_component<glm::vec3>);
+    REQUIRE(has_w_component<glm::dvec4>);
+
+    REQUIRE(not has_w_component<eig::Vector2cd>);
+    REQUIRE(not has_w_component<eig::Vector3i>);
+    REQUIRE(not has_w_component<eig::Vector4f>);
+
     REQUIRE(not has_w_component<point4fX>);
     REQUIRE(not has_w_component<std::vector<float>>);
     REQUIRE(not has_w_component<std::string>);
@@ -132,6 +224,19 @@ TEST_CASE("has-w-component", "[has_component]") {
 
 TEST_CASE("has-W-component", "[has_component]") {
     REQUIRE(has_W_component<point4fX>);
+
+    REQUIRE(not has_W_component<SDL_Point>);
+    REQUIRE(not has_W_component<sf::Vector2f>);
+    REQUIRE(not has_W_component<sf::Vector2i>);
+    REQUIRE(not has_W_component<sf::Vector3i>);
+
+    REQUIRE(not has_W_component<glm::vec2>);
+    REQUIRE(not has_W_component<glm::vec3>);
+    REQUIRE(not has_W_component<glm::vec4>);
+
+    REQUIRE(not has_W_component<eig::Vector2cd>);
+    REQUIRE(not has_W_component<eig::Vector3i>);
+    REQUIRE(not has_W_component<eig::Vector4d>);
 
     REQUIRE(not has_W_component<point2fX>);
     REQUIRE(not has_W_component<point3dX>);
@@ -155,6 +260,14 @@ TEST_CASE("has-i-component", "[has_component]") {
     REQUIRE(not has_i_component<point2fx>);
     REQUIRE(not has_i_component<point3ix>);
     REQUIRE(not has_i_component<point3dx>);
+
+    REQUIRE(has_i_component<eig::Vector2i>);
+    REQUIRE(has_i_component<eig::Vector3d>);
+    REQUIRE(has_i_component<eig::Vector4cf>);
+
+    REQUIRE(has_i_component<glm::vec2>);
+    REQUIRE(has_i_component<glm::ivec3>);
+    REQUIRE(has_i_component<glm::dvec4>);
 }
 
 TEST_CASE("has-1d-component", "[has_component]") {

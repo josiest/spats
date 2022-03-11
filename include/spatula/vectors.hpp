@@ -197,6 +197,20 @@ struct x_getter<Vector> {
     }
 };
 
+template<class Vector>
+    requires has_i_component<Vector> and
+            (not (has_x_component<Vector> or has_X_component<Vector>))
+struct x_getter<Vector> {
+    auto const & operator()(Vector const & v) const
+    {
+        return v[0];
+    }
+    auto & operator()(Vector & v) const
+    {
+        return v[0];
+    }
+};
+
 /** Get the y component of a vector */
 template<class Vector> struct y_getter{
     auto const & operator()(Vector const & v) const;
@@ -421,7 +435,7 @@ requires(Vector v) {
  
 template<class Vector>
 constexpr bool is_numeric = is_2d_numeric<Vector> or is_3d_numeric<Vector> or
-                            is_4d_numeric<Vector>;
+                            is_4d_numeric<Vector> or has_i_component<Vector>;
 
 //
 // Constructible concepts
