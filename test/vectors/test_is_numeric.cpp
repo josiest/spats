@@ -3,8 +3,11 @@
 
 #include <SDL2/SDL.h>
 #include <SFML/System.hpp>
-#include <glm/glm.hpp>
-#include <eigen3/Eigen/Dense>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <Eigen/Dense>
+#include "spatula_extensions/eigen.hpp"
 
 #include <vector>
 #include <string>
@@ -196,52 +199,52 @@ TEST_CASE("eigen-is-4d-numeric", "[is_numeric]") {
 }
 
 TEST_CASE("std::vector-is-2d-numeric", "[is_numeric]") {
-    REQUIRE(is_2d_numeric<std::vector<char>>);
-    REQUIRE(is_2d_numeric<std::vector<short>>);
-    REQUIRE(is_2d_numeric<std::vector<int>>);
-    REQUIRE(is_2d_numeric<std::vector<long>>);
-    REQUIRE(is_2d_numeric<std::vector<long long>>);
+    REQUIRE(not is_2d_numeric<std::vector<char>>);
+    REQUIRE(not is_2d_numeric<std::vector<short>>);
+    REQUIRE(not is_2d_numeric<std::vector<int>>);
+    REQUIRE(not is_2d_numeric<std::vector<long>>);
+    REQUIRE(not is_2d_numeric<std::vector<long long>>);
 
-    REQUIRE(is_2d_numeric<std::vector<std::uint8_t>>);
-    REQUIRE(is_2d_numeric<std::vector<std::uint16_t>>);
-    REQUIRE(is_2d_numeric<std::vector<std::uint32_t>>);
-    REQUIRE(is_2d_numeric<std::vector<std::uint64_t>>);
+    REQUIRE(not is_2d_numeric<std::vector<std::uint8_t>>);
+    REQUIRE(not is_2d_numeric<std::vector<std::uint16_t>>);
+    REQUIRE(not is_2d_numeric<std::vector<std::uint32_t>>);
+    REQUIRE(not is_2d_numeric<std::vector<std::uint64_t>>);
 
-    REQUIRE(is_2d_numeric<std::vector<float>>);
-    REQUIRE(is_2d_numeric<std::vector<double>>);
-    REQUIRE(is_2d_numeric<std::vector<long double>>);
+    REQUIRE(not is_2d_numeric<std::vector<float>>);
+    REQUIRE(not is_2d_numeric<std::vector<double>>);
+    REQUIRE(not is_2d_numeric<std::vector<long double>>);
 }
 
 TEST_CASE("std::vector-is-3d-numeric", "[is_numeric]") {
-    REQUIRE(is_3d_numeric<std::vector<char>>);
-    REQUIRE(is_3d_numeric<std::vector<short>>);
-    REQUIRE(is_3d_numeric<std::vector<int>>);
-    REQUIRE(is_3d_numeric<std::vector<long>>);
-    REQUIRE(is_3d_numeric<std::vector<long long>>);
+    REQUIRE(not is_3d_numeric<std::vector<char>>);
+    REQUIRE(not is_3d_numeric<std::vector<short>>);
+    REQUIRE(not is_3d_numeric<std::vector<int>>);
+    REQUIRE(not is_3d_numeric<std::vector<long>>);
+    REQUIRE(not is_3d_numeric<std::vector<long long>>);
 
-    REQUIRE(is_3d_numeric<std::vector<std::uint8_t>>);
-    REQUIRE(is_3d_numeric<std::vector<std::uint16_t>>);
-    REQUIRE(is_3d_numeric<std::vector<std::uint32_t>>);
-    REQUIRE(is_3d_numeric<std::vector<std::uint64_t>>);
+    REQUIRE(not is_3d_numeric<std::vector<std::uint8_t>>);
+    REQUIRE(not is_3d_numeric<std::vector<std::uint16_t>>);
+    REQUIRE(not is_3d_numeric<std::vector<std::uint32_t>>);
+    REQUIRE(not is_3d_numeric<std::vector<std::uint64_t>>);
 
-    REQUIRE(is_3d_numeric<std::vector<float>>);
-    REQUIRE(is_3d_numeric<std::vector<double>>);
-    REQUIRE(is_3d_numeric<std::vector<long double>>);
+    REQUIRE(not is_3d_numeric<std::vector<float>>);
+    REQUIRE(not is_3d_numeric<std::vector<double>>);
+    REQUIRE(not is_3d_numeric<std::vector<long double>>);
 }
 
 TEST_CASE("std::vector-is-4d-numeric", "[is_numeric]") {
-    REQUIRE(is_4d_numeric<std::vector<char>>);
-    REQUIRE(is_4d_numeric<std::vector<short>>);
-    REQUIRE(is_4d_numeric<std::vector<int>>);
-    REQUIRE(is_4d_numeric<std::vector<long>>);
-    REQUIRE(is_4d_numeric<std::vector<long long>>);
+    REQUIRE(not is_4d_numeric<std::vector<char>>);
+    REQUIRE(not is_4d_numeric<std::vector<short>>);
+    REQUIRE(not is_4d_numeric<std::vector<int>>);
+    REQUIRE(not is_4d_numeric<std::vector<long>>);
+    REQUIRE(not is_4d_numeric<std::vector<long long>>);
 
-    REQUIRE(is_4d_numeric<std::vector<std::uint8_t>>);
-    REQUIRE(is_4d_numeric<std::vector<std::uint16_t>>);
-    REQUIRE(is_4d_numeric<std::vector<std::uint32_t>>);
-    REQUIRE(is_4d_numeric<std::vector<std::uint64_t>>);
+    REQUIRE(not is_4d_numeric<std::vector<std::uint8_t>>);
+    REQUIRE(not is_4d_numeric<std::vector<std::uint16_t>>);
+    REQUIRE(not is_4d_numeric<std::vector<std::uint32_t>>);
+    REQUIRE(not is_4d_numeric<std::vector<std::uint64_t>>);
 
-    REQUIRE(is_4d_numeric<std::vector<float>>);
-    REQUIRE(is_4d_numeric<std::vector<double>>);
-    REQUIRE(is_4d_numeric<std::vector<long double>>);
+    REQUIRE(not is_4d_numeric<std::vector<float>>);
+    REQUIRE(not is_4d_numeric<std::vector<double>>);
+    REQUIRE(not is_4d_numeric<std::vector<long double>>);
 }
