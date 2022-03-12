@@ -36,7 +36,7 @@ TEST_CASE("semivector2:custom", "[semivector][custom][2D]") {
 TEST_CASE("semivector3:custom", "[semivector][custom][3D]") {
     REQUIRE(not semivector3<point2iX>);
     REQUIRE(not semivector3<point2dX>);
-    REQUIRE(semivector2<point3fX>);
+    REQUIRE(semivector3<point3fX>);
     REQUIRE(not semivector3<point4uX>);
     REQUIRE(not semivector3<point4fX>);
 }

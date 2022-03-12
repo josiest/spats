@@ -411,6 +411,7 @@ scalar_field_t<Vector> & get_w(Vector & v)
 template<class Vector>
 constexpr bool is_2d_numeric =
     has_1d_component<Vector> and has_2d_component<Vector> and
+    (not (has_3d_component<Vector> or has_4d_component<Vector>)) and
 requires(Vector v) {
     { get_x(v) } -> std::same_as<scalar_field_t<Vector>&>;
     { get_y(v) } -> std::same_as<scalar_field_t<Vector>&>;
@@ -418,21 +419,24 @@ requires(Vector v) {
 
 template<class Vector>
 constexpr bool is_3d_numeric =
-    is_2d_numeric<Vector> and has_3d_component<Vector> and
+    has_1d_component<Vector> and has_2d_component<Vector> and
+    has_3d_component<Vector> and (not has_4d_component<Vector>) and
 requires(Vector v) {
+    { get_x(v) } -> std::same_as<scalar_field_t<Vector>&>;
+    { get_y(v) } -> std::same_as<scalar_field_t<Vector>&>;
     { get_z(v) } -> std::same_as<scalar_field_t<Vector>&>;
 };
 
 template<class Vector>
 constexpr bool is_4d_numeric =
-    is_3d_numeric<Vector> and has_4d_component<Vector> and
+    has_1d_component<Vector> and has_2d_component<Vector> and
+    has_3d_component<Vector> and has_4d_component<Vector> and
 requires(Vector v) {
+    { get_x(v) } -> std::same_as<scalar_field_t<Vector>&>;
+    { get_y(v) } -> std::same_as<scalar_field_t<Vector>&>;
+    { get_z(v) } -> std::same_as<scalar_field_t<Vector>&>;
     { get_w(v) } -> std::same_as<scalar_field_t<Vector>&>;
 };
- 
-template<class Vector>
-constexpr bool is_numeric = is_2d_numeric<Vector> or is_3d_numeric<Vector> or
-                            is_4d_numeric<Vector> or has_i_component<Vector>;
 
 //
 // Constructible concepts
