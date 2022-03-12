@@ -98,15 +98,12 @@ constexpr bool has_static_size = requires {
 };
 
 template<class Vector, std::size_t N>
-struct dimension_query {
-    static constexpr const bool value = false;
-};
+struct dimension_query : public std::false_type{};
 
 template<class Vector, std::size_t N>
     requires has_static_size<Vector>
-struct dimension_query<Vector, N> {
-    static constexpr const bool value = std::tuple_size_v<Vector> > N;
-};
+struct dimension_query<Vector, N>
+    : public std::bool_constant<(std::tuple_size_v<Vector> > N)>{};
 
 /** Determine if a vector has a component in the Nth dimension */
 template<class Vector, std::size_t N>
