@@ -7,6 +7,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <Eigen/Dense>
+#include "spatula_extensions/eigen.hpp"
 
 #include <vector>
 #include <complex>
