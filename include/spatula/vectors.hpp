@@ -522,10 +522,10 @@ concept semivector = semivector2<Vector> or semivector3<Vector> or
 template<class Vector>
 constexpr bool has_vector_closure =
 requires(Vector a, Vector b, scalar_field_t<Vector> c) {
-    { a + b } -> std::same_as<Vector>;
-    { a - b } -> std::same_as<Vector>;
-    { c * a } -> std::same_as<Vector>;
-    { a * c } -> std::same_as<Vector>;
+    { a + b } -> std::convertible_to<Vector>;
+    { a - b } -> std::convertible_to<Vector>;
+    { c * a } -> std::convertible_to<Vector>;
+    { a * c } -> std::convertible_to<Vector>;
 
     { a += b } -> std::same_as<Vector&>;
     { a -= b } -> std::same_as<Vector&>;
