@@ -13,73 +13,99 @@
 #include <Eigen/Dense>
 #include <SFML/System.hpp>
 
-using namespace sp;
-namespace eig = Eigen;
-
-struct ipoint2x4 { int x, y; };
-
-TEST_CASE("SDL2: field-2d-constructible", "[field_constructible]") {
-    REQUIRE(field_2d_constructible<SDL_Point>);
-    REQUIRE(field_2d_constructible<ipoint2x4>);
+namespace test_field_constructible {
+struct ipoint2x { int x, y; };
 }
 
-TEST_CASE("glm: field-2d-constructble", "[field_constructible]") {
+using namespace sp;
+using namespace test_field_constructible;
+
+TEST_CASE("field-2d-constructible:custom",
+          "[field_constructible][custom][2D]") {
+
+    REQUIRE(field_2d_constructible<ipoint2x>);
+}
+
+TEST_CASE("field-2d-constructible:SDL",
+          "[field_constructible][SDL][2D]") {
+
+    REQUIRE(field_2d_constructible<SDL_Point>);
+}
+
+TEST_CASE("field-2d-constructble:glm",
+          "[field_constructible][glm][2D]") {
+
     REQUIRE(field_2d_constructible<glm::vec2>);
     REQUIRE(field_2d_constructible<glm::ivec2>);
     REQUIRE(field_2d_constructible<glm::dvec2>);
     REQUIRE(field_2d_constructible<glm::uvec2>);
 }
 
-TEST_CASE("glm: field-3d-constructible", "[field_constructible]") {
+TEST_CASE("field-3d-constructible:glm",
+          "[field_constructible][glm][3D]") {
+
     REQUIRE(field_3d_constructible<glm::vec3>);
     REQUIRE(field_3d_constructible<glm::ivec3>);
     REQUIRE(field_3d_constructible<glm::dvec3>);
     REQUIRE(field_3d_constructible<glm::uvec3>);
 }
 
-TEST_CASE("glm: field-4d-constructible", "[field_constructible]") {
+TEST_CASE("field-4d-constructible:glm",
+          "[field_constructible][glm][4D]") {
+
     REQUIRE(field_4d_constructible<glm::vec4>);
     REQUIRE(field_4d_constructible<glm::ivec4>);
     REQUIRE(field_4d_constructible<glm::dvec4>);
     REQUIRE(field_4d_constructible<glm::uvec4>);
 }
 
-TEST_CASE("sfml: field-2d-constructible", "[field_constructible]") {
+TEST_CASE("field-2d-constructible:SFML",
+          "[field_constructible][SFML][2D]") {
+
     REQUIRE(field_2d_constructible<sf::Vector2i>);
     REQUIRE(field_2d_constructible<sf::Vector2u>);
     REQUIRE(field_2d_constructible<sf::Vector2f>);
 }
 
-TEST_CASE("sfml: field-3d-constructible", "[field_constructible]") {
+TEST_CASE("field-3d-constructible:SFML",
+          "[field_constructible][SFML][3D]") {
     REQUIRE(field_3d_constructible<sf::Vector3i>);
     REQUIRE(field_3d_constructible<sf::Vector3f>);
 }
 
-TEST_CASE("eigen: field-2d-constructible", "[field_constructible]") {
-    REQUIRE(field_2d_constructible<eig::Vector2i>);
-    REQUIRE(field_2d_constructible<eig::Vector2f>);
-    REQUIRE(field_2d_constructible<eig::Vector2d>);
-    REQUIRE(field_2d_constructible<eig::Vector2cf>);
-    REQUIRE(field_2d_constructible<eig::Vector2cd>);
+TEST_CASE("field-2d-constructible:Eigen",
+          "[field_constructible][Eigen][2D]") {
+
+    REQUIRE(field_2d_constructible<Eigen::Vector2i>);
+    REQUIRE(field_2d_constructible<Eigen::Vector2f>);
+    REQUIRE(field_2d_constructible<Eigen::Vector2d>);
+    REQUIRE(field_2d_constructible<Eigen::Vector2cf>);
+    REQUIRE(field_2d_constructible<Eigen::Vector2cd>);
 }
 
-TEST_CASE("eigen: field-3d-constructible", "[field_constructible]") {
-    REQUIRE(field_3d_constructible<eig::Vector3i>);
-    REQUIRE(field_3d_constructible<eig::Vector3f>);
-    REQUIRE(field_3d_constructible<eig::Vector3d>);
-    REQUIRE(field_3d_constructible<eig::Vector3cf>);
-    REQUIRE(field_3d_constructible<eig::Vector3cd>);
+TEST_CASE("field-3d-constructible:Eigen",
+          "[field_constructible][Eigen][3D]") {
+
+    REQUIRE(field_3d_constructible<Eigen::Vector3i>);
+    REQUIRE(field_3d_constructible<Eigen::Vector3f>);
+    REQUIRE(field_3d_constructible<Eigen::Vector3d>);
+    REQUIRE(field_3d_constructible<Eigen::Vector3cf>);
+    REQUIRE(field_3d_constructible<Eigen::Vector3cd>);
 }
 
-TEST_CASE("eigen: field-4d-constructible", "[field_constructible]") {
-    REQUIRE(field_4d_constructible<eig::Vector4i>);
-    REQUIRE(field_4d_constructible<eig::Vector4f>);
-    REQUIRE(field_4d_constructible<eig::Vector4d>);
-    REQUIRE(field_4d_constructible<eig::Vector4cf>);
-    REQUIRE(field_4d_constructible<eig::Vector4cd>);
+TEST_CASE("field-4d-constructible:Eigen",
+          "[field_constructible][Eigen][4D]") {
+
+    REQUIRE(field_4d_constructible<Eigen::Vector4i>);
+    REQUIRE(field_4d_constructible<Eigen::Vector4f>);
+    REQUIRE(field_4d_constructible<Eigen::Vector4d>);
+    REQUIRE(field_4d_constructible<Eigen::Vector4cf>);
+    REQUIRE(field_4d_constructible<Eigen::Vector4cd>);
 }
 
-TEST_CASE("std::vector: field-2d-constructible", "[field_constructible]") {
+TEST_CASE("field-2d-constructible:std::vector",
+          "[field_constructible][std::vector][2D]") {
+
     REQUIRE(field_2d_constructible<std::vector<std::int8_t>>);
     REQUIRE(field_2d_constructible<std::vector<std::int16_t>>);
     REQUIRE(field_2d_constructible<std::vector<std::int32_t>>);
@@ -95,7 +121,9 @@ TEST_CASE("std::vector: field-2d-constructible", "[field_constructible]") {
     REQUIRE(field_2d_constructible<std::vector<long double>>);
 }
 
-TEST_CASE("std::vector: field-3d-constructible", "[field_constructible]") {
+TEST_CASE("field-3d-constructible:std::vector",
+          "[field_constructible][std::vector][3D]") {
+
     REQUIRE(field_3d_constructible<std::vector<std::int8_t>>);
     REQUIRE(field_3d_constructible<std::vector<std::int16_t>>);
     REQUIRE(field_3d_constructible<std::vector<std::int32_t>>);
@@ -111,7 +139,9 @@ TEST_CASE("std::vector: field-3d-constructible", "[field_constructible]") {
     REQUIRE(field_3d_constructible<std::vector<long double>>);
 }
 
-TEST_CASE("std::vector: field-4d-constructible", "[field_constructible]") {
+TEST_CASE("field-4d-constructible:std::field",
+          "[field_constructible][std::vector][4D]") {
+
     REQUIRE(field_4d_constructible<std::vector<std::int8_t>>);
     REQUIRE(field_4d_constructible<std::vector<std::int16_t>>);
     REQUIRE(field_4d_constructible<std::vector<std::int32_t>>);
@@ -127,7 +157,9 @@ TEST_CASE("std::vector: field-4d-constructible", "[field_constructible]") {
     REQUIRE(field_4d_constructible<std::vector<long double>>);
 }
 
-TEST_CASE("std::array: field-2d-constructible", "[field_constructible]") {
+TEST_CASE("field-2d-constructible:std::array",
+          "[field_constructible][std::array][2D]") {
+
     REQUIRE(field_2d_constructible<std::array<std::int8_t, 2>>);
     REQUIRE(field_2d_constructible<std::array<std::int16_t, 2>>);
     REQUIRE(field_2d_constructible<std::array<std::int32_t, 2>>);
@@ -143,7 +175,9 @@ TEST_CASE("std::array: field-2d-constructible", "[field_constructible]") {
     REQUIRE(field_2d_constructible<std::array<long double, 2>>);
 }
 
-TEST_CASE("std::array: field-3d-constructible", "[field_constructible]") {
+TEST_CASE("field-3d-constructible:std::array",
+          "[field_constructible][std::array][3D]") {
+
     REQUIRE(field_3d_constructible<std::array<std::int8_t, 3>>);
     REQUIRE(field_3d_constructible<std::array<std::int16_t, 3>>);
     REQUIRE(field_3d_constructible<std::array<std::int32_t, 3>>);
@@ -159,7 +193,9 @@ TEST_CASE("std::array: field-3d-constructible", "[field_constructible]") {
     REQUIRE(field_3d_constructible<std::array<long double, 3>>);
 }
 
-TEST_CASE("std::array: field-4d-constructible", "[field_constructible]") {
+TEST_CASE("field-4d-constructible:std::arry",
+          "[field_constructible][std::array][4D]") {
+
     REQUIRE(field_4d_constructible<std::array<std::int8_t, 4>>);
     REQUIRE(field_4d_constructible<std::array<std::int16_t, 4>>);
     REQUIRE(field_4d_constructible<std::array<std::int32_t, 4>>);
@@ -173,34 +209,4 @@ TEST_CASE("std::array: field-4d-constructible", "[field_constructible]") {
     REQUIRE(field_4d_constructible<std::array<float, 4>>);
     REQUIRE(field_4d_constructible<std::array<double, 4>>);
     REQUIRE(field_4d_constructible<std::array<long double, 4>>);
-}
-
-TEST_CASE("not 2d-constructible", "[field_constructible]") {
-    REQUIRE(not field_2d_constructible<glm::vec4>);
-    REQUIRE(not field_2d_constructible<glm::ivec3>);
-    REQUIRE(not field_2d_constructible<glm::uvec4>);
-    REQUIRE(not field_2d_constructible<glm::dvec3>);
-
-    REQUIRE(not field_2d_constructible<sf::Vector3i>);
-    REQUIRE(not field_2d_constructible<sf::Vector3f>);
-}
-
-TEST_CASE("not 3d-constructible", "[field_constructible]") {
-    REQUIRE(not field_3d_constructible<glm::vec4>);
-    REQUIRE(not field_3d_constructible<glm::ivec2>);
-    REQUIRE(not field_3d_constructible<glm::uvec4>);
-    REQUIRE(not field_3d_constructible<glm::dvec2>);
-
-    REQUIRE(not field_3d_constructible<sf::Vector2i>);
-    REQUIRE(not field_3d_constructible<sf::Vector2f>);
-}
-
-TEST_CASE("not 4d-constructible", "[field_constructible]") {
-    REQUIRE(not field_4d_constructible<glm::vec3>);
-    REQUIRE(not field_4d_constructible<glm::ivec2>);
-    REQUIRE(not field_4d_constructible<glm::uvec3>);
-    REQUIRE(not field_4d_constructible<glm::dvec2>);
-
-    REQUIRE(not field_4d_constructible<sf::Vector2i>);
-    REQUIRE(not field_4d_constructible<sf::Vector2f>);
 }

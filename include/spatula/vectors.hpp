@@ -562,9 +562,6 @@ concept vector4 = std::regular<Vector> and
                   is_4d_numeric<Vector> and
                   has_vector_closure<Vector>;
 
-template<class Vector>
-concept vector = vector2<Vector> or vector3<Vector> or vector4<Vector>;
-
 //
 // Math Utilities
 //
