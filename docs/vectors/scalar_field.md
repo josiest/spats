@@ -19,12 +19,11 @@ Determine the underlying scalar field type of a vector.
 
 ### Member types
 
-
 <code>type</code> - the type of the scalar field
 
 ### Helper variable template
-<pre>
 
+<pre>
 template&lt;class Vector>
 using sp::scalar_field_t = sp::scalar_field&lt;Vector>::type;
 </pre>

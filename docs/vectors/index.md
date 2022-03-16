@@ -100,7 +100,12 @@ vectors:
   are also
   [_almost_ compatible](https://eigen.tuxfamily.org/dox/group__TutorialMatrixArithmetic.html)
   with [`sp::vector`](vector.html), but they access components by index and not
-  by name. spatula will also add support for this in the very nearby future.
+  by name. In order to get around this, spatula defines a specialization for
+  types that support
+  [`std::tuple_size`](https://en.cppreference.com/w/cpp/utility/tuple_size).
+  Eigen doesn't come with a specialization for
+  [`std::tuple_size`](https://en.cppreference.com/w/cpp/utility/tuple_size),
+  so spatula defines it in the header `<spatula_extensions/eigen.hpp>`
 
 ## "plain old" vectors
 
