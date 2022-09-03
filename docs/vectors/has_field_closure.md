@@ -20,10 +20,10 @@ bool constexpr sp::has_field_closure = /* see below */;
 
 template&lt;typename Field>
 bool constexpr sp::has_field_closure = requires(Field a, Field b) {
-    { a + b } -> <a href="https://en.cppreference.com/w/cpp/concepts/same_as">std::same_as</a>&lt;Field>;
-    { a - b } -> <a href="https://en.cppreference.com/w/cpp/concepts/same_as">std::same_as</a>&lt;Field>;
-    { a * b } -> <a href="https://en.cppreference.com/w/cpp/concepts/same_as">std::same_as</a>&lt;Field>;
-    { a / b } -> <a href="https://en.cppreference.com/w/cpp/concepts/same_as">std::same_as</a>&lt;Field>;
+    { a + b } -> <a href="https://en.cppreference.com/w/cpp/concepts/convertible_to">std::convertible_to</a>&lt;Field>;
+    { a - b } -> <a href="https://en.cppreference.com/w/cpp/concepts/convertible_to">std::convertible_to</a>&lt;Field>;
+    { a * b } -> <a href="https://en.cppreference.com/w/cpp/concepts/convertible_to">std::convertible_to</a>&lt;Field>;
+    { a / b } -> <a href="https://en.cppreference.com/w/cpp/concepts/convertible_to">std::convertible_to</a>&lt;Field>;
 
     { a += b } -> <a href="https://en.cppreference.com/w/cpp/concepts/same_as">std::same_as</a>&lt;Field&>;
     { a -= b } -> <a href="https://en.cppreference.com/w/cpp/concepts/same_as">std::same_as</a>&lt;Field&>;

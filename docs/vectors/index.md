@@ -164,11 +164,15 @@ auto dot(Vector const & a, Vector const & b)
 }
 ```
 
-# vector components
-
-## example: partial ordering
-
-## specializing component getters
+You can read more about vector components on the
+[components page](components/index.html)
 
 # field concepts
 
+One of the fundamental mathematical building blocks of a vector, is that thier
+components are members of a [_field_](https://mathworld.wolfram.com/Field.html)
+
+## Wait... but the integers aren't a field!
+
+True! Integers don't have inverses, so they're not a field in the strict
+mathematical sense of the word.

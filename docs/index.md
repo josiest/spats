@@ -19,7 +19,7 @@ data types.
 
 auto dot(sp::semivector2 auto const & a, sp::semivector2 auto const & b)
 {
-    return a.x * b.x + a.y * b.y;
+    return sp::get_x(a) * sp::get_x(b) + sp::get_y(a) * sp::get_y(b);
 }
 
 int main()
