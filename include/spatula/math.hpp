@@ -1,4 +1,4 @@
 #pragma once
 
 #include "spatula/vectors.hpp"
-#include "spatual/directions.hpp"
+#include "spatula/directions.hpp"
