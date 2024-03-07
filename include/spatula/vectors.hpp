@@ -609,6 +609,31 @@ bool least_by_component(Vector const & u, Vector const & v)
 }
 
 /** Generate the bounding corners of a set of vectors.
+ *
+ * Return
+ *   A pair of vectors (lower-left, upper-right), representing the bounding
+ *   corners of the input points.
+ *
+ * Parameters
+ *   begin - iterator to the start the input points to find the boundary of
+ *   end - sentinel for begin that ends the input points
+ */
+template<semivector2 Vector, std::weakly_incrementable In, std::sentinel_for<In> S>
+requires std::totally_ordered<scalar_field_t<Vector>>
+
+auto bounding_corners2d(In begin, S end)
+{
+    // find the points with the least and greatest x and y coordinates
+    auto const &[xmin, xmax] = std::minmax(begin, end, least_x);
+    auto const &[ymin, ymax] = std::minmax(begin, end, least_y);
+
+    Vector min(get_x(xmin), get_y(ymin));
+    Vector max(get_x(xmax), get_y(ymax));
+    return std::make_pair(min, max);
+}
+
+#ifdef __cpp_lib_ranges
+/** Generate the bounding corners of a set of vectors.
  * 
  * Return
  *   A pair of vectors (lower-left, upper-right), representing the bounding
@@ -634,4 +659,5 @@ auto bounding_corners2d(Range && points)
     return std::make_pair(min, max);
 }
 
+#endif
 }

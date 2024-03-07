@@ -11,6 +11,12 @@
 
 /** The cardinal directions. */
 namespace sp::cardinal { enum direction_name { north, east, south, west }; }
+namespace sp::flat_hex{
+enum direction_name { north, northeast, southeast, south, southwest, northwest };
+}
+namespace sp::pointed_hex{
+enum direction_name{ northeast, east, southeast, southwest, west, northwest };
+}
 
 namespace sp {
 

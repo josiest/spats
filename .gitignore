@@ -71,6 +71,11 @@ tags
 # --- Project ---
 build
 
+# --- Intellij ---
+
+.idea/
+cmake-build-debug/
+
 # --- VScode ---
 .vscode/*
 

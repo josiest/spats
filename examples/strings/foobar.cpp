@@ -1,6 +1,6 @@
 #include <spatula/vectors.hpp>
-#include <string>
 #include <iostream>
+#include <array>
 
 using namespace std::string_literals;
 
@@ -22,6 +22,14 @@ auto cross(Vector const & a, Vector const & b)
 
 int main()
 {
-    std::cout << "dot(\"foo\", \"bar\") = " << dot("foo"s, "bar"s) << "\n"
-                 "cross(\"foo\", \"bar\") = " << cross("foo"s, "bar"s) << "\n";
+    // will not compile because strings are not numeric:
+    // std::cout << "dot(\"foo\", \"bar\") = " << dot("foo"s, "bar"s) << "\n"
+    //              "cross(\"foo\", \"bar\") = " << cross("foo"s, "bar"s) << "\n";
+
+    constexpr std::array a{1, 2, 3};
+    constexpr std::array b{3, 2, 1};
+    const auto c = cross(a, b);
+    std::cout << "dot([1, 2, 3], [3, 2, 1]) = " << dot(a, b) << "\n"
+              << "cross([1, 2, 3], [3, 2, 1]) = ["
+              << c[0] << ", " << c[1] << ", " << c[2] << "]\n";
 }
