@@ -59,8 +59,8 @@ struct enum_to_vector<cardinal::direction_name, Vector>{
     {
         std::uint32_t constexpr N = enum_size_v<cardinal::direction_name>;
         static std::array<Vector, N> directions{
-            /* north */ Vector(0, 1), /* east */ Vector(1, 0),
-            /* south */ Vector(0, -1), /* west */ Vector(-1, 0)
+            /* north */ Vector{0, 1}, /* east */ Vector{1, 0},
+            /* south */ Vector{0, -1}, /* west */ Vector{-1, 0}
         };
         return directions[dir];
     }
