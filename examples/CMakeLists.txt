@@ -7,7 +7,7 @@ add_executable(print-directions directions/print-directions.cpp)
 add_executable(random-directions directions/random-directions.cpp)
 
 #target_link_libraries(foobar PUBLIC sp::spatula)
-set_target_properties(string-example PROPERTIES
+set_target_properties(string-example print-directions random-directions PROPERTIES
         CXX_STANDARD 20
         CXX_STANDARD_REQUIRED true)
 

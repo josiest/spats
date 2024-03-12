@@ -36,6 +36,16 @@ struct enum_size<cardinal::direction_name> {
     static constexpr std::size_t value = 4;
 };
 
+template<>
+struct enum_size<pointed_hex::direction_name> {
+    static constexpr std::size_t value = 6;
+};
+
+template<>
+struct enum_size<flat_hex::direction_name> {
+    static constexpr std::size_t value = 6;
+};
+
 /** An enum with sequential values defined from [0, enum_size_v<Enum>). */
 template<class Enum>
 concept ranged_enum = std::is_enum_v<Enum> and requires { enum_size_v<Enum>; };
@@ -70,9 +80,9 @@ template<field_2d_constructible Vector>
 requires std::constructible_from<scalar_field_t<Vector>, int>
 
 struct enum_to_vector<flat_hex::direction_name, Vector>{
-    Vector operator()(cardinal::direction_name dir) const
+    Vector operator()(flat_hex::direction_name dir) const
     {
-        std::uint32_t constexpr N = enum_size_v<cardinal::direction_name>;
+        std::uint32_t constexpr N = enum_size_v<flat_hex::direction_name>;
         static std::array<Vector, N> directions{
                 /* north */ Vector{0, 1}, /* northeast */ Vector{1, 1}, /* southeast */ Vector{1 , -1},
                 /* south */ Vector{0, -1}, /* southwest */ Vector{-1, -1}, /* northwest */ Vector{-1, 1}
@@ -85,9 +95,9 @@ template<field_2d_constructible Vector>
 requires std::constructible_from<scalar_field_t<Vector>, int>
 
 struct enum_to_vector<pointed_hex::direction_name, Vector>{
-    Vector operator()(cardinal::direction_name dir) const
+    Vector operator()(pointed_hex::direction_name dir) const
     {
-        std::uint32_t constexpr N = enum_size_v<cardinal::direction_name>;
+        std::uint32_t constexpr N = enum_size_v<pointed_hex::direction_name>;
         static std::array<Vector, N> directions{
                 //enum direction_name{ northeast, east, southeast, southwest, west, northwest };
                 /* northeast */ Vector{1, 1}, /* east */ Vector{1, 0}, /* southeast */ Vector{1 , -1},
