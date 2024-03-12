@@ -68,7 +68,7 @@ struct enum_to_vector<cardinal::direction_name, Vector>{
     Vector operator()(cardinal::direction_name dir) const
     {
         std::uint32_t constexpr N = enum_size_v<cardinal::direction_name>;
-        static std::array<Vector, N> directions{
+        static constexpr std::array<Vector, N> directions{
             /* north */ Vector{0, 1}, /* east */ Vector{1, 0},
             /* south */ Vector{0, -1}, /* west */ Vector{-1, 0}
         };
@@ -83,7 +83,7 @@ struct enum_to_vector<flat_hex::direction_name, Vector>{
     Vector operator()(flat_hex::direction_name dir) const
     {
         std::uint32_t constexpr N = enum_size_v<flat_hex::direction_name>;
-        static std::array<Vector, N> directions{
+        static constexpr std::array<Vector, N> directions{
                 /* north */ Vector{0, 1}, /* northeast */ Vector{1, 1}, /* southeast */ Vector{1 , -1},
                 /* south */ Vector{0, -1}, /* southwest */ Vector{-1, -1}, /* northwest */ Vector{-1, 1}
         };
@@ -98,7 +98,7 @@ struct enum_to_vector<pointed_hex::direction_name, Vector>{
     Vector operator()(pointed_hex::direction_name dir) const
     {
         std::uint32_t constexpr N = enum_size_v<pointed_hex::direction_name>;
-        static std::array<Vector, N> directions{
+        static constexpr std::array<Vector, N> directions{
                 //enum direction_name{ northeast, east, southeast, southwest, west, northwest };
                 /* northeast */ Vector{1, 1}, /* east */ Vector{1, 0}, /* southeast */ Vector{1 , -1},
                 /* southwest */ Vector{-1, -1}, /* west */ Vector{-1, 0}, /* northwest */ Vector{-1, 1}
