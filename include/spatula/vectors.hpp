@@ -59,6 +59,10 @@ template<class Vector>
 constexpr bool has_X_component = requires(Vector v) {
     has_field_closure<decltype(v.X)>;
 };
+template<class Vector>
+constexpr bool has_q_component = requires(Vector v) {
+    has_field_closure<decltype(v.q)>;
+};
 
 template<class Vector>
 constexpr bool has_y_component = requires(Vector v) {
@@ -67,6 +71,10 @@ constexpr bool has_y_component = requires(Vector v) {
 template<class Vector>
 constexpr bool has_Y_component = requires(Vector v) {
     has_field_closure<decltype(v.Y)>;
+};
+template<class Vector>
+constexpr bool has_r_component = requires(Vector v) {
+    has_field_closure<decltype(v.r)>;
 };
 
 template<class Vector>
@@ -112,12 +120,12 @@ constexpr bool has_nd_component = dimension_query<Vector, N>::value;
 template<class Vector>
 constexpr bool has_1d_component = 
     has_x_component<Vector> or has_X_component<Vector> or
-    has_nd_component<Vector, 0>;
+    has_q_component<Vector> or has_nd_component<Vector, 0>;
 
 template<class Vector>
 constexpr bool has_2d_component =
     has_y_component<Vector> or has_Y_component<Vector> or
-    has_nd_component<Vector, 1>;
+    has_r_component<Vector> or has_nd_component<Vector, 1>;
 
 template<class Vector>
 constexpr bool has_3d_component =
@@ -145,6 +153,11 @@ template<class Vector>
     requires has_X_component<Vector>
 struct scalar_field<Vector> {
     using type = std::remove_reference_t<decltype(std::declval<Vector>().X)>;
+};
+template<class Vector>
+    requires has_q_component<Vector>
+struct scalar_field<Vector> {
+    using type = std::remove_reference_t<decltype(std::declval<Vector>().q)>;
 };
 
 // it's possible that a vector type may support operator[] and have an x field
