@@ -18,9 +18,9 @@ int main()
     std::random_device seed{};
     std::mt19937 rng{seed()};
 
-    direction_distribution cardinal_step(0, sp::enum_size_v<cardinal>);
-    direction_distribution flat_step(0, sp::enum_size_v<flat_hex>);
-    direction_distribution pointed_step(0, sp::enum_size_v<pointed_hex>);
+    direction_distribution cardinal_step(0, sp::enum_size_v<cardinal>-1);
+    direction_distribution flat_step(0, sp::enum_size_v<flat_hex>-1);
+    direction_distribution pointed_step(0, sp::enum_size_v<pointed_hex>-1);
 
     constexpr std::size_t N = 5;
 
