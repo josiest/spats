@@ -208,6 +208,19 @@ struct x_getter<Vector> {
 };
 
 template<class Vector>
+    requires has_q_component<Vector>
+struct x_getter<Vector> {
+    auto const & operator()(Vector const & v) const
+    {
+        return v.q;
+    }
+    auto & operator()(Vector & v) const
+    {
+        return v.q;
+    }
+};
+
+template<class Vector>
     requires has_i_component<Vector> and
             (not (has_x_component<Vector> or has_X_component<Vector>))
 struct x_getter<Vector> {
@@ -250,6 +263,19 @@ struct y_getter<Vector> {
     auto & operator()(Vector & v) const
     {
         return v.Y;
+    }
+};
+
+template <class Vector>
+    requires has_r_component<Vector>
+struct y_getter<Vector> {
+    auto const & operator()(Vector const & v) const
+    {
+        return v.r;
+    }
+    auto & operator()(Vector & v) const
+    {
+        return v.r;
     }
 };
 
